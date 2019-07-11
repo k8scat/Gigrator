@@ -1,0 +1,21 @@
+# GitLab 服务器地址
+gitlab = 'https://git.xxx.com'
+# GitLab API
+gitlab_api = 'https://git.xxx.com/api/v4'
+# GitLab 授权令牌
+gitlab_token = ''
+# GitLab 用户名
+gitlab_username = ''
+# GitLab SSH
+gitlab_ssh = 'git@git.xxx.com:'
+
+# Git 服务器地址
+github = 'https://github.com'
+# GitHub API
+github_api = 'https://api.github.com'
+# GitHub 授权令牌
+github_token = ''
+# GitHub 用户名
+github_username = ''
+# GitHub SSH
+github_ssh = 'git@github.com:'
