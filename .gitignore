@@ -2,3 +2,4 @@
 *.json
 private.py
 repo
+.idea

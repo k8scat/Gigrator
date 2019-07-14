@@ -1,16 +1,19 @@
 import requests
-import config
+import config as config
 import json
 import os
 import sys
 from urllib import parse
 
-class _const:
+
+class Const:
     GITLAB = 'gitlab'
     GITHUB = 'github'
+    GITEE = 'gitee'
+
 
 # 支持的Git服务器
-support = ['gitlab', 'github']
+support = ['gitlab', 'github', 'gitee']
 
 # GitLab 认证头信息
 gitlab_headers = {
@@ -20,187 +23,327 @@ gitlab_headers = {
 github_headers = {
     'Authorization': 'token ' + config.github_token
 }
+# Gitee 头信息
+gitee_headers = {
+    'Content-Type': 'application/json;charset=UTF-8'
+}
 
 # repo临时目录
-repo_dir = os.getcwd() + '/repo/'
+repo_temp_dir = os.getcwd() + '/repo/'
 
-# 列出用户所在源Git服务器上所有的仓库
-def list_repos(server=None):
-    if server is None or server == '':
+
+# 列出在源Git服务器上所有的仓库
+def list_repos(server):
+    if server == '' or not isinstance(server, str):
+        print('请输入正确的Git服务器')
         return
-    
+
+    server = server.lower()
+
     # 定义最终返回的所有仓库集合
     # 使用extend添加另一个列表
     all_repos = []
     page = 1
-    
-    server = server.lower()
-    
+    list_repos_url = None
+    headers = None
+
     if server == 'gitlab':
         # GitLab
         # List user projects: GET /users/:user_id/projects (需要分页: ?page=1)
-        while True:
-            r = requests.get(config.gitlab_api + '/users/' + config.gitlab_username + '/projects?page=' + str(page), headers=gitlab_headers)
-            
-            repos = json.loads(r.content.decode('utf-8'))
-            
-            if len(repos) == 0:
-                break
-            
-            all_repos.extend(repos)
-            for repo in repos:
-                print(repo['name'])
-                
-            page += 1
-            
-    
+        list_repos_url = config.gitlab_api + '/users/' + config.gitlab_username + '/projects?page='
+        headers = gitlab_headers
+
     if server == 'github':
         # GitHub
         # Get: Get /repos/:owner/:repo (通过Get判断仓库是否已存在)
         # List user repositories: Get /users/:username/repos (需要分页: ?page=1)
-        while True:
-            r = requests.get(config.github_api + '/users/' + config.github_username + '/repos?page=' + str(page), headers=github_headers)
-            
-            repos = json.loads(r.content.decode('utf-8'))
-            
-            if len(repos) == 0:
-                break
-            
-            all_repos.extend(repos)
-            for repo in repos:
-                print(repo['name'])
-            
-            page += 1
-    
+        list_repos_url = config.github_api + '/users/' + config.github_username + '/repos?page='
+        headers = github_headers
+
+    if server == 'gitee':
+        # Gitee
+        # 列出授权用户的所有仓库: GET /user/repos
+        # https://gitee.com/api/v5/swagger#/getV5UserRepos
+        list_repos_url = config.gitee_api + '/user/repos?access_token=' + config.gitee_token \
+                         + '&type=personal&sort=full_name&per_page=100&page='
+        headers = gitee_headers
+
+    while True:
+        r = requests.get(list_repos_url + str(page), headers=headers)
+
+        repos = json.loads(r.content.decode('utf-8'))
+
+        if len(repos) == 0:
+            break
+
+        all_repos.extend(repos)
+        for repo in repos:
+            print(repo['name'])
+
+        page += 1
+
     print('总共' + str(len(all_repos)) + '个仓库')
     return all_repos
 
+
+# 拼接clone命令
+def join_clone_cmd(ssh, username, repo_name):
+    if ssh is None or ssh == '' or username is None or username == '' \
+            or repo_name is None or repo_name == '' \
+            or not isinstance(ssh, str) or not isinstance(username, str) or not isinstance(repo_name, str):
+        return None
+
+    clone_cmd = 'cd ' + repo_temp_dir + ' && git clone --bare ' + ssh + username + '/' + repo_name + '.git'
+    return clone_cmd
+
+
+# 拼接push命令
+def join_push_cmd(ssh, username, repo_name):
+    if ssh == '' or username == '' or repo_name == '' \
+            or not isinstance(ssh, str) or not isinstance(username, str) or not isinstance(repo_name, str):
+        return None
+
+    push_cmd = 'cd ' + repo_temp_dir + repo_name + '.git && git push --mirror ' \
+               + ssh + username + '/' + repo_name + '.git'
+    return push_cmd
+
+
+# 检查Git服务器是否存在同名仓库
+def is_existed(git_server, repo_name):
+    pass
+
+
+# 从Git服务器clone仓库
+def clone(git_server, repo_name):
+    pass
+
+
+# 向Git服务器推送仓库(包括创建)
+def push(git_server, repo):
+    pass
+
+
 # 迁移仓库
-def migrate(repo=None, source=None, dest=None):
-    if repo is None or source is None or dest is None:
-        return
-    
-    # 判断用户在目的Git服务器上是否已有同名的仓库
+# return: 1表示将终止所有迁移, 2表示单个仓库迁移失败
+def migrate(repo, source, dest):
+
+    if repo is None or not isinstance(repo, dict) \
+            or source == '' or not isinstance(source, str) \
+            or dest == '' or not isinstance(dest, str):
+        return 1
+
+    # 判断在目的Git服务器上是否已有同名的仓库
     # 有则不做迁移操作, 并进行提示
-    if dest == _const.GITLAB:
-        # check
+    check_url = ''
+    headers = None
+    if dest == Const.GITLAB:
         # Get single project: GET /projects/:id
-        path = parse.quote(config.gitlab_username + '/' + repo['name'])
-        r = requests.get(config.gitlab_api + '/projects/' + path)
-        if r.status_code == 200:
-            print('您所在目的Git服务已存在' + repo['name'] + '仓库!')
-            return
-    elif dest == _const.GITHUB:
-        # check
+        # urlencode 需要加上safe='', / 就会转成%2F
+        path = parse.quote(config.gitlab_username + '/' + repo['name'], safe='')
+        check_url = config.gitlab_api + '/projects/' + path
+        headers = gitlab_headers
+
+    elif dest == Const.GITHUB:
         # Get: GET /repos/:owner/:repo
-        r = requests.get(config.gitlab_api + '/repos/' + config.github_username + '/' + repo['name'])
-        if r.status_code == 200:
-            print('您所在目的Git服务已存在' + repo['name'] + '仓库!')
-            return
-        
+        check_url = config.gitlab_api + '/repos/' + config.github_username + '/' + repo['name']
+        headers = github_headers
+
+    elif dest == Const.GITEE:
+        # 获取用户的某个仓库: GET /repos/{owner}/{repo}
+        # https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepo
+        check_url = config.gitee_api + '/repos/' + config.gitee_username + '/' + repo['name'] \
+                    + '?access_token=' + config.gitee_token
+
+    r = requests.get(check_url, headers=headers)
+    if r.status_code == 200:
+        print('您所在目的Git服务已存在' + repo['name'] + '仓库! 故此仓库无法迁移')
+        return 2
+
     # clone from source
-    if source == _const.GITLAB:
-        if not os.path.isdir(repo_dir):
-            os.mkdir(repo_dir)
-        cmd = 'cd ' + repo_dir + ' && git clone --bare ' + config.gitlab_ssh + config.gitlab_username + '/' + repo['name'] + '.git'
+    # 检查repo是否存在, 存在则删除
+    repo_dir = repo_temp_dir + repo['name'] + '.git'
+    print(repo_dir)
+    if os.path.isdir(repo_dir):
+        cmd = 'rm -rf ' + repo_dir
         if os.system(cmd) != 0:
-            print('仓库' + repo['name'] + 'clone失败!')
-            return 1
-    elif source == _const.GITHUB:
-        if not os.path.isdir(repo_dir):
-            os.mkdir(repo_dir)
-        cmd = 'cd ' + repo_dir + ' && git clone --bare ' + config.github_ssh + config.github_username + '/' + repo['name'] + '.git'
-        if os.system(cmd) != 0:
-            print('仓库' + repo['name'] + 'clone失败!')
-            return 1
-        
-    # create through API
-    # 判断用户在目的Git服务器上是否已有同名的仓库
-    # 有则不做迁移操作, 并进行提示
-    if dest == _const.GITLAB:
-        # Create project for user: POST /projects/user/:user_id (status_code: 201)
-        # data = {
-        #     'name': repo['name'],
-        #     'description': '' if repo['description'] is None else repo['description'],
-        #     'visibility': 'private' if repo['private'] else 'public'
-        # }
+            print('删除目录失败')
+
+    clone_cmd = None
+    # 不同的Git服务器获取到的数据格式不一样, 所以在这里设置private
+    private = False
+    if source == Const.GITLAB:
+        clone_cmd = join_clone_cmd(config.gitlab_ssh, config.gitlab_username, repo['name'])
+        if repo['visibility'] == 'private':
+            private = True
+
+    elif source == Const.GITHUB:
+        clone_cmd = join_clone_cmd(config.github_ssh, config.github_username, repo['name'])
+        if repo['private']:
+            private = True
+
+    elif source == Const.GITEE:
+        clone_cmd = join_clone_cmd(config.gitee_ssh, config.gitee_username, repo['name'])
+        if repo['private']:
+            private = True
+
+    if clone_cmd is None:
+        print('请检查配置是否无误(config.py)')
+        return 1
+
+    # 尝试clone, 失败将终止整个程序
+    if os.system(clone_cmd) != 0:
+        print('请检查配置是否无误(config.py)')
+        print('请确定源Git服务器已经添加ssh_key')
+        return 1
+    else:
+        print('拉取 ' + repo['name'] + ' 成功')
+
+    # create repo through API
+    create_repo_url = None
+    headers = None
+    data = None
+    ssh = None
+    username = None
+
+    # GitLab
+    # Create project for user: POST /projects/user/:user_id (status_code: 201)
+    if dest == Const.GITLAB:
         description = '' if repo['description'] is None else repo['description']
-        visibility = 'private' if repo['private'] else 'public'
+        visibility = 'private' if private else 'public'
         data = 'name=' + repo['name'] + '&description=' + description + '&visibility=' + visibility
-        print(json.dumps(data))
-        r = requests.post(config.gitlab_api + '/projects', headers=gitlab_headers, data=data)
-        if r.status_code != 201:
-            print(r.content.decode('utf-8'))
-            cmd = 'rm -rf ' + repo_dir + repo['name'] + '.git'
-            os.system(cmd)
-            return 1
-        
-        # push to dest
-        cmd = 'cd ' + repo_dir + repo['name'] + '.git && git push --mirror ' + config.gitlab_ssh + config.gitlab_username + '/' + repo['name'] + '.git'
-        r = os.system(cmd)
-        cmd = 'rm -rf ' + repo_dir + repo['name'] + '.git'
-        os.system(cmd)
-        if r != 0:
-            print('仓库' + repo['name'] + '迁移失败!')
-            return 1
-    elif dest == _const.GITHUB:
-        # Create project for user: POST /user/repos (status_code: 201)
-        data = {
+        create_repo_url = config.gitlab_api + '/projects'
+        headers = gitlab_headers
+        ssh = config.gitlab_ssh
+        username = config.gitlab_username
+
+    # GitHub
+    # Create project for user: POST /user/repos (status_code: 201)
+    elif dest == Const.GITHUB:
+        json_data = {
             'name': repo['name'],
             'description': repo['description'],
-            'private': True if repo['visibility'] == 'private' else False
+            'private': private
         }
-        r = requests.post(config.github_api + '/user/repos', headers=github_headers, data=json.dumps(data))
-        if r.status_code != 201:
-            print(r.content.decode('utf-8'))
-            cmd = 'rm -rf ' + repo_dir + repo['name'] + '.git'
-            os.system(cmd)
-            return 1
-        
-        # push to dest
-        cmd = 'cd ' + repo_dir + repo['name'] + '.git && git push --mirror ' + config.github_ssh + config.github_username + '/' + repo['name'] + '.git'
-        r = os.system(cmd)
-        cmd = 'rm -rf ' + repo_dir + repo['name'] + '.git'
-        os.system(cmd)
-        if r != 0:
-            print('仓库' + repo['name'] + '迁移失败!')
-            return 1
+        data = json.dumps(json_data)
+        create_repo_url = config.github_api + '/user/repos'
+        headers = github_headers
+        ssh = config.github_ssh
+        username = config.github_username
+
+    # 创建一个仓库: POST /user/repos
+    # https://gitee.com/api/v5/swagger#/postV5UserRepos
+    elif dest == Const.GITEE:
+        json_data = {
+            'access_token': config.gitee_token,
+            'name': repo['name'],
+            'description': repo['description'],
+            'private': private,
+            'has_issues': True,
+            'has_wiki': True
+        }
+        data = json.dumps(json_data)
+        create_repo_url = config.gitee_api + '/user/repos'
+        headers = gitee_headers
+        ssh = config.gitee_ssh
+        username = config.gitee_username
+
+    if create_repo_url is None:
+        print('请检查配置是否无误(config.py)')
+        return 1
+
+    r = requests.post(create_repo_url, headers=headers, data=data)
+    if r.status_code != 201:
+        print(r.content.decode('utf-8'))
+        return 1
+    else:
+        print('在目的Git服务器上创建 ' + repo['name'] + ' 仓库成功')
+
+    push_cmd = join_push_cmd(ssh, username, repo['name'])
+    if push_cmd is None:
+        print('请检查配置是否无误(config.py)')
+        return 1
+
+    # push to dest
+    if os.system(push_cmd) != 0:
+        print('仓库' + repo['name'] + 'push失败!')
+        print('请检查配置是否无误(config.py)')
+        print('请确定目的Git服务器已经添加ssh_key')
+        return 1
+
+    return 0
+
+
+# 在做迁移操作前，检查源Git服务器和目的Git服务器的配置
+def check_config(source, dest):
+    pass
+
 
 if __name__ == "__main__":
-    
-    # 创建repo临时目录
-    if not os.path.isdir(repo_dir):
-        os.mkdir(repo_dir)   
 
-    print('使用前请先配置config文件')
-    print('目前仅支持GitLab与GitHub之间的仓库迁移')
-    # 用户输入源Git服务器
+    # 创建repo临时目录
+    if not os.path.isdir(repo_temp_dir):
+        if os.mkdir(repo_temp_dir) != 0:
+            print('创建repo临时目录失败')
+            sys.exit(0)
+
+    print('目前支持的Git服务器: GitLab | GitHub | Gitee')
+    # 输入源Git服务器
     while True:
-        source = input('源Git服务器(GitLab|GitHub): ').lower().replace(' ', '')
+        source = input('源Git服务器: ').lower().replace(' ', '')
         if source != '' and source in support:
             break
         print('输入有误, 请重新输入!')
 
-    # 用户输入目的Git服务器
+    # 输入目的Git服务器
     while True:
-        dest = input('目标Git服务器(GitLab|GitHub): ').lower().replace(' ', '')
+        dest = input('目标Git服务器: ').lower().replace(' ', '')
         if dest != '' and dest in support:
             break
         print('输入有误, 请重新输入!')
 
+    # 列出在源Git服务器上所有的仓库
     repos = list_repos(source)
 
-    # 用户输入需要迁移的仓库
-    migrate_repos = input('请输入需要迁移的仓库(例如: repo_name1, repo2_name): ').replace(' ', '').split(',')
+    # 输入需要迁移的仓库
+    migrate_repos = input('请指定需要迁移的仓库(例如: repo1_name, repo2_name, 默认迁移所有仓库): ').replace(' ', '').split(',')
 
-    # 循环进行仓库迁移
-    for migrate_repo in migrate_repos:
+    count = 0
+    failed_repos = []
+    # 迁移所有仓库
+    if len(migrate_repos) == 1 and migrate_repos[0] == '':
+        print('开始迁移所有仓库')
         for repo in repos:
-            if repo['name'].lower() == migrate_repo.lower():
-                if migrate(repo=repo, source=source, dest=dest) == 1:
-                    sys.exit(0)
-                print('仓库' + migrate_repo + '迁移成功!')
-                break
-                
-        
-        
+            r = migrate(repo=repo, source=source, dest=dest)
+            if r == 0:
+                print('仓库 ' + repo['name'] + ' 迁移成功!')
+                count += 1
+            elif r == 1:
+                sys.exit(0)
+            elif r == 2:
+                print(repo['name'] + ' 仓库迁移失败')
+                failed_repos.append(repo['name'])
+            break
+
+    else:
+        print('开始迁移指定仓库')
+        # 循环进行仓库迁移
+        for migrate_repo in migrate_repos:
+            for repo in repos:
+                if repo['name'].lower() == migrate_repo.lower():
+                    r = migrate(repo=repo, source=source, dest=dest)
+                    if r == 0:
+                        print('仓库 ' + repo['name'] + ' 迁移成功!')
+                        count += 1
+                    elif r == 1:
+                        sys.exit(0)
+                    elif r == 2:
+                        print(repo['name'] + ' 仓库迁移失败')
+                        failed_repos.append(repo['name'])
+                    break
+
+        print('成功迁移' + str(count) + '个仓库')
+        # 打印迁移失败的repos
+        if len(failed_repos) != 0:
+            print('迁移失败的仓库:')
+            for failed_repo in failed_repos:
+                print(failed_repo)
