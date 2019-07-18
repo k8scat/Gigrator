@@ -2,23 +2,24 @@
 
 Migrate repos from one GitServer to another. Git仓库迁移助手
 
+## Todo
+
+* [ ] [Gitea获取用户所有仓库分页的问题](https://github.com/go-gitea/gitea/issues/7515)
+* [ ] 优化配置文件(目前的配置不够灵活)
+* [ ] 检测是否为空仓库(空仓库将导致推送失败)
+
 ## 支持
 
 * [x] GitLab
 * [x] GitHub
 * [x] 码云
-* [ ] Gitea
+* [x] Gitea
 * [ ] Gogs
-
-从GitHub迁移至Gitee:
-
-![源GitHub仓库](./images/source_github.png)
-
-![目的Gitee仓库](./images/dest_gitee.png)
 
 注:
 * 目前只能迁移指定用户下的仓库, 即`:username/:repo`, 不包括参与的或者组织的仓库
 * 迁移包括commits、branches和tags, 不包括issues、pr和wiki
+* 影响迁移速度的因素: Git服务器带宽、本地网速
 
 ## 基础环境
 
@@ -29,9 +30,8 @@ Migrate repos from one GitServer to another. Git仓库迁移助手
 
 ## 配置
 
-不同Git服务器需要有以下五个属性配置:
+不同Git服务器需要有以下四个属性配置:
 
-* 服务器地址
 * API 前缀
 * 授权令牌
 * 用户名
@@ -92,7 +92,10 @@ pipenv run python gigrator.py
 
 ### Gitea
 
-* [Gitea API](https://try.gitea.io/api/swagger#/)
+* [Gitea API](https://gitea.com/api/v1/swagger)
+* [Get a repo](https://gitea.com/api/v1/swagger#/repository/repoGet)
+* [Create a repo](https://gitea.com/api/v1/swagger#/repository/createCurrentUserRepo)
+* [List the repos that the authenticated user owns or has access to](https://gitea.com/api/v1/swagger#/user/userCurrentListRepos)
 
 ### Gogs
 

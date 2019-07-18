@@ -10,10 +10,11 @@ class Const:
     GITLAB = 'gitlab'
     GITHUB = 'github'
     GITEE = 'gitee'
+    GITEA = 'gitea'
 
 
 # 支持的Git服务器
-support = ['gitlab', 'github', 'gitee']
+support = ['gitlab', 'github', 'gitee', 'gitea']
 
 # GitLab 认证头信息
 gitlab_headers = {
@@ -26,6 +27,11 @@ github_headers = {
 # Gitee 头信息
 gitee_headers = {
     'Content-Type': 'application/json;charset=UTF-8'
+}
+# Gitea 头信息
+gitea_headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json'
 }
 
 # repo临时目录
@@ -68,19 +74,49 @@ def list_repos(server):
                          + '&type=personal&sort=full_name&per_page=100&page='
         headers = gitee_headers
 
+    if server == 'gitea':
+        # GET
+        # ​/user​/repos
+        # List the repos that the authenticated user owns or has access to
+        list_repos_url = config.gitea_api + '/user/repos?access_token=' + config.gitea_token
+        headers = gitea_headers
+
+        ################################################
+        # special gitea
+        r = requests.get(list_repos_url, headers=headers)
+        repos = json.loads(r.content.decode('utf-8'))
+
+        # gitea似乎没有做分页
+        all_repos.extend(repos)
+        for repo in all_repos:
+            if repo['owner']['username'] != config.gitea_username:
+                all_repos.remove(repo)
+
+        for repo in all_repos:
+            print(repo['name'])
+
+        print('总共' + str(len(all_repos)) + '个仓库')
+        return all_repos
+        ################################################
+
     while True:
         r = requests.get(list_repos_url + str(page), headers=headers)
 
-        repos = json.loads(r.content.decode('utf-8'))
+        if r.status_code == 200:
 
-        if len(repos) == 0:
+            repos = json.loads(r.content.decode('utf-8'))
+
+            if len(repos) == 0:
+                break
+
+            all_repos.extend(repos)
+            for repo in repos:
+                print(repo['name'])
+
+            page += 1
+        else:
+            print(r)
             break
-
-        all_repos.extend(repos)
-        for repo in repos:
-            print(repo['name'])
-
-        page += 1
 
     print('总共' + str(len(all_repos)) + '个仓库')
     return all_repos
@@ -126,7 +162,6 @@ def push(git_server, repo):
 # 迁移仓库
 # return: 1表示将终止所有迁移, 2表示单个仓库迁移失败
 def migrate(repo, source, dest):
-
     if repo is None or not isinstance(repo, dict) \
             or source == '' or not isinstance(source, str) \
             or dest == '' or not isinstance(dest, str):
@@ -153,6 +188,15 @@ def migrate(repo, source, dest):
         # https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepo
         check_url = config.gitee_api + '/repos/' + config.gitee_username + '/' + repo['name'] \
                     + '?access_token=' + config.gitee_token
+        headers = gitee_headers
+
+    elif dest == Const.GITEA:
+        # GET
+        # ​/repos​/{owner}​/{repo}
+        # Get a repository
+        check_url = config.gitea_api + '/' + config.gitea_username + '/' + repo['name'] \
+                    + '?access_token=' + config.gitea_token
+        headers = gitea_headers
 
     r = requests.get(check_url, headers=headers)
     if r.status_code == 200:
@@ -160,7 +204,7 @@ def migrate(repo, source, dest):
         return 2
 
     # clone from source
-    # 检查repo是否存在, 存在则删除
+    # 检查本地是否存在repo, 存在则删除
     repo_dir = repo_temp_dir + repo['name'] + '.git'
     print(repo_dir)
     if os.path.isdir(repo_dir):
@@ -183,6 +227,11 @@ def migrate(repo, source, dest):
 
     elif source == Const.GITEE:
         clone_cmd = join_clone_cmd(config.gitee_ssh, config.gitee_username, repo['name'])
+        if repo['private']:
+            private = True
+
+    elif source == Const.GITEA:
+        clone_cmd = join_clone_cmd(config.gitea_ssh, config.gitea_username, repo['name'])
         if repo['private']:
             private = True
 
@@ -247,12 +296,31 @@ def migrate(repo, source, dest):
         ssh = config.gitee_ssh
         username = config.gitee_username
 
-    if create_repo_url is None:
-        print('请检查配置是否无误(config.py)')
-        return 1
+    elif dest == Const.GITEA:
+        # POST
+        # ​/user​/repos
+        # Create a repository
+        json_data = {
+            "auto_init": False,
+            'description': repo['description'],
+            'name': repo['name'],
+            'private': private
+        }
+        data = json.dumps(json_data)
+        # bug
+        # \u200b: 看不见的分隔符 Zero-width space
+        # create_repo_url = config.gitea_api + '/user​/repos?access_token=' + config.gitea_token
+        create_repo_url = config.gitea_api + '/user/repos?access_token=' + config.gitea_token
+        headers = gitea_headers
+        ssh = config.gitea_ssh
+        username = config.gitea_username
 
     r = requests.post(create_repo_url, headers=headers, data=data)
     if r.status_code != 201:
+        # 409 conflict
+        # 存在同名仓库, 则对这个仓库不做迁移
+        if r.status_code == 409:
+            return 2
         print(r.content.decode('utf-8'))
         return 1
     else:
@@ -286,7 +354,7 @@ if __name__ == "__main__":
             print('创建repo临时目录失败')
             sys.exit(0)
 
-    print('目前支持的Git服务器: GitLab | GitHub | Gitee')
+    print('目前支持的Git服务器: GitLab | GitHub | Gitee | Gitea')
     # 输入源Git服务器
     while True:
         source = input('源Git服务器: ').lower().replace(' ', '')
