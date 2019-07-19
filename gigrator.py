@@ -1,5 +1,5 @@
 import requests
-import config as config
+import private as config
 import json
 import os
 import sys
@@ -39,6 +39,7 @@ repo_temp_dir = os.getcwd() + '/repo/'
 
 
 # 列出在源Git服务器上所有的仓库
+# return 1表示将终止整个迁移
 def list_repos(server):
     if server == '' or not isinstance(server, str):
         print('请输入正确的Git服务器')
@@ -62,8 +63,8 @@ def list_repos(server):
     if server == 'github':
         # GitHub
         # Get: Get /repos/:owner/:repo (通过Get判断仓库是否已存在)
-        # List user repositories: Get /users/:username/repos (需要分页: ?page=1)
-        list_repos_url = config.github_api + '/users/' + config.github_username + '/repos?page='
+        # List your repositories: GET /user/repos (需要分页: ?page=1)
+        list_repos_url = config.github_api + '/user/repos?type=owner&page='
         headers = github_headers
 
     if server == 'gitee':
@@ -114,9 +115,16 @@ def list_repos(server):
                 print(repo['name'])
 
             page += 1
+
+        elif r.status_code == 401:
+            print('授权令牌无效, 请在config.py文件中配置正确的授权令牌')
+            return all_repos
         else:
             print(r)
-            break
+            return all_repos
+
+    with open('temp.json', 'w') as f:
+        f.write(json.dumps(all_repos))
 
     print('总共' + str(len(all_repos)) + '个仓库')
     return all_repos
@@ -371,6 +379,9 @@ if __name__ == "__main__":
 
     # 列出在源Git服务器上所有的仓库
     repos = list_repos(source)
+    # 没有仓库的话直接退出
+    if len(repos) == 0:
+        sys.exit(0)
 
     # 输入需要迁移的仓库
     migrate_repos = input('请指定需要迁移的仓库(例如: repo1_name, repo2_name, 默认迁移所有仓库): ').replace(' ', '').split(',')

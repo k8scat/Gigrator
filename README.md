@@ -1,20 +1,23 @@
 # Gigrator
 
-Migrate repos from one GitServer to another. Git仓库迁移助手
+Migrate repos from one GitServer to another. Git 仓库迁移助手
 
 ## Todo
 
+* [ ] **迁移整个Git服务器的仓库**
 * [ ] [Gitea获取用户所有仓库分页的问题](https://github.com/go-gitea/gitea/issues/7515)
 * [ ] 优化配置文件(目前的配置不够灵活)
 * [ ] 检测是否为空仓库(空仓库将导致推送失败)
 
 ## 支持
 
-* [x] GitLab
-* [x] GitHub
-* [x] 码云
-* [x] Gitea
-* [ ] Gogs
+* [x] [码云](https://gitee.com/)
+* [x] [GitLab](https://gitlab.com/)
+* [x] [GitHub](https://github.com/)
+* [x] [Gitea](https://gitea.io/zh-cn/)
+* [ ] [Gogs](https://gogs.io/)
+* [ ] [Coding](https://coding.net/)
+* [ ] [Bitbucket](https://bitbucket.org)
 
 注:
 * 目前只能迁移指定用户下的仓库, 即`:username/:repo`, 不包括参与的或者组织的仓库
@@ -100,6 +103,14 @@ pipenv run python gigrator.py
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
+
+### Coding
+
+* [Open API](https://open.coding.net/open-api/?_ga=2.234006813.220305798.1563503634-1235584671.1544277191)
+
+### Bitbucket
+
+* [API](https://confluence.atlassian.com/bitbucket/rest-apis-222724129.html)
 
 ## License
 
