@@ -1,44 +1,23 @@
-# GitLab API 前缀
-gitlab_api = 'https://git.xxx.com/api/v4'
-# GitLab 授权令牌
-gitlab_token = ''
-# GitLab 用户名
-gitlab_username = ''
-# GitLab SSH 前缀
-gitlab_ssh = 'git@git.xxx.com:'
+# type Git服务器类型, 例如: gitee, github, gitlab, gitea, gogs, coding, bitbucket, 必填
+# self_hosted 是否是自托管的Git服务器, 例如: gitlab, gitea, gogs, 默认为False
+# username 所在Git服务器的用户名, 必填
+# token 用户所在Git服务器的授权令牌, 必填
+# url Git服务器的访问地址, 如果是自托管的Git服务器, 则需要设置url, 例如: https://git.example.com (包括具体协议: http/https), 默认为None
 
-# GitHub API 前缀
-github_api = 'https://api.github.com'
-# GitHub 授权令牌
-github_token = ''
-# GitHub 用户名
-github_username = ''
-# GitHub SSH 前缀
-github_ssh = 'git@github.com:'
+# 迁移源Git服务器配置
+source = {
+    'type': '',
+    'self_hosted': False,
+    'username': '',
+    'token': '',
+    'url': ''
+}
 
-# Gitee API 前缀
-gitee_api = 'https://gitee.com/api/v5'
-# Gitee 授权令牌
-gitee_token = ''
-# Gitee 用户名
-gitee_username = ''
-# Gitee SSH 前缀
-gitee_ssh = 'git@gitee.com:'
-
-# Gitea API 前缀
-gitea_api = 'https://git.xxx.com/api/v1'
-# Gitea 授权令牌
-gitea_token = ''
-# Gitea 用户名
-gitea_username = ''
-# Gitea SSH 前缀
-gitea_ssh = 'git@git.xxx.com:'
-
-# Gogs API 前缀
-gogs_api = 'https://git.xxx.com/api/v1'
-# Gogs 授权令牌
-gogs_token = ''
-# Gogs 用户名
-gogs_username = ''
-# Gogs SSH 前缀
-gogs_ssh = 'git@git.xxx.com:'
+# 迁移目的Git服务器配置
+dest = {
+    'type': '',
+    'self_hosted': False,
+    'username': '',
+    'token': '',
+    'url': ''
+}

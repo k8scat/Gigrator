@@ -1,5 +1,6 @@
 .vscode
 *.json
 private.py
-repo
+repos
 .idea
+__pycache__

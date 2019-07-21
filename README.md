@@ -2,11 +2,14 @@
 
 Migrate repos from one GitServer to another. Git 仓库迁移助手
 
+## Wish
+
+希望大家可以尽情放肆地给这个项目提 **Issues/PR** :pray:
+
 ## Todo
 
-* [ ] **迁移整个Git服务器的仓库**
-* [ ] [Gitea获取用户所有仓库分页的问题](https://github.com/go-gitea/gitea/issues/7515)
-* [ ] 优化配置文件(目前的配置不够灵活)
+* [ ] **多线程并发迁移**
+* [ ] **[ADMIN]迁移整个Git服务器的仓库**
 * [ ] 检测是否为空仓库(空仓库将导致推送失败)
 
 ## 支持
@@ -20,6 +23,7 @@ Migrate repos from one GitServer to another. Git 仓库迁移助手
 * [ ] [Bitbucket](https://bitbucket.org)
 
 注:
+* 使用前请确认已在迁移源和目的Git服务器上添加了`SSH Key`
 * 目前只能迁移指定用户下的仓库, 即`:username/:repo`, 不包括参与的或者组织的仓库
 * 迁移包括commits、branches和tags, 不包括issues、pr和wiki
 * 影响迁移速度的因素: Git服务器带宽、本地网速
@@ -33,14 +37,7 @@ Migrate repos from one GitServer to another. Git 仓库迁移助手
 
 ## 配置
 
-不同Git服务器需要有以下四个属性配置:
-
-* API 前缀
-* 授权令牌
-* 用户名
-* SSH 前缀
-
-参考配置: [config.py](./config.py)
+[config.py](./config.py)
 
 ## 使用
 
