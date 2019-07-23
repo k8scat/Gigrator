@@ -1,18 +1,18 @@
 # Gigrator
 
-en | [zh](./README_zh.md)
+[en](./README.md) | zh
 
-Migrate repos from one GitServer to another.
+Git 仓库迁移助手
 
-## Todo
+## 待做
 
-* [ ] **Concurrent Migration**
-* [ ] **[ADMIN]Migrate all repos on a GitServer**
-* [ ] Inspect the empty repo
+* [ ] **多线程并发迁移**
+* [ ] **[ADMIN]迁移整个Git服务器的仓库**
+* [ ] 检测是否为空仓库(空仓库将导致推送失败)
 
-## Support
+## 支持
 
-* [x] [Gitee](https://gitee.com/)
+* [x] [码云](https://gitee.com/)
 * [x] [GitLab](https://gitlab.com/)
 * [x] [GitHub](https://github.com/)
 * [x] [Gitea](https://gitea.io/zh-cn/)
@@ -20,63 +20,63 @@ Migrate repos from one GitServer to another.
 * [ ] [Gogs](https://gogs.io/)
 * [ ] [Bitbucket](https://bitbucket.org)
 
-Note:
-* **`Coding` and `Bitbucket` only support migrating out**
-* Make sure you have added `SSH Key` on GitServers before using
-* Only support migrating repos the specified user owned like `:username/:repo`, not include repos participated in or belonged tp groups
-* Migration include all commits, branches and tags, not include issues, pr and wiki
-* Factors affecting migration speed: GitServer bandwidth and local network speed
+注:
+* **`Coding` 和 `Bitbucket` 只支持迁出**
+* 使用前请确认已在迁移源和目的Git服务器上添加了 `SSH Key`
+* 目前只能迁移指定用户下的仓库, 即 `:username/:repo`, 不包括参与的或者组织的仓库
+* 迁移包括commits、branches和tags, 不包括issues、pr和wiki
+* 影响迁移速度的因素: Git服务器带宽、本地网速
 
-## Environment
+## 基础环境
 
 * Git
 * Python
 
-My own development environment: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
+本人开发环境: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
 
-## Dependency
+## 依赖
 
 * [Requests](https://2.python-requests.org/en/master/)
 
-## Config
+## 配置
 
 [config.py](./config.py)
 
-## Start
+## 使用
 
 ```bash
-# Install pipenv
+# 安装 pipenv
 pip install --user pipenv
 
-# Clone the repo
+# 拉取仓库
 git clone git@github.com:hsowan/Gigrator.git
 cd gigrator
 
-# Init venv
+# 初始化环境
 pipenv --python 3
 pipenv install
 
-# Run
+# 运行
 pipenv run python gigrator.py
 
 ```
 
-## Flow
+## 思路
 
-1. Provide the source and the dest GitServers for migration
-2. List all repo on the source GitServer
-3. Input repos to migrate
-4. Migrate the selected repos:
-    1. Inspect that the dest GitServer has a repository of the same name
-    2. Clone repo from the source GitServer
-    3. Create repo on the dest GitServer
-    4. Push repo to the dest GitServer
+1. 提供源Git服务器和目的Git服务器
+2. 列出在源Git服务器的所有仓库
+3. 选择需要迁移的仓库
+4. 向目的Git服务器迁移所选仓库:
+    1. 检查目的Git服务器是否有同名仓库
+    2. 拉取源Git服务器的仓库
+    3. 在目的Git服务器创建仓库
+    4. 向目的Git服务器推送仓库
     
-## Wish
+## 希望
 
-Expect **Issues/PR** :pray:
+希望大家可以尽情放肆地给这个项目提 **Issues/PR** :pray:
 
-## Docs
+## 文档
 
 ### GitLab
 
@@ -90,7 +90,7 @@ Expect **Issues/PR** :pray:
 * [GitHub Create Repo](https://developer.github.com/v3/repos/#create)
 * [GitHub Personal Access Token](https://github.com/settings/tokens)
 
-### Gitee
+### 码云
 
 * [Gitee OpenAPI](https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepoStargazers?ex=no)
 * [Gitee Personal Access Token](https://gitee.com/profile/personal_access_tokens)
@@ -110,7 +110,7 @@ Expect **Issues/PR** :pray:
 
 * [API](https://developer.atlassian.com/bitbucket/api/2/reference/?_ga=2.171048931.291787321.1563811851-293193087.1563504921)
 
-## License
+## 开源许可协议
 
 [MIT](https://github.com/hsowan/Gigrator/blob/master/LICENSE)
 
