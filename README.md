@@ -2,10 +2,6 @@
 
 Migrate repos from one GitServer to another. Git 仓库迁移助手
 
-## Wish
-
-希望大家可以尽情放肆地给这个项目提 **Issues/PR** :pray:
-
 ## Todo
 
 * [ ] **多线程并发迁移**
@@ -18,13 +14,14 @@ Migrate repos from one GitServer to another. Git 仓库迁移助手
 * [x] [GitLab](https://gitlab.com/)
 * [x] [GitHub](https://github.com/)
 * [x] [Gitea](https://gitea.io/zh-cn/)
+* [x] [Coding](https://coding.net/)
 * [ ] [Gogs](https://gogs.io/)
-* [ ] [Coding](https://coding.net/)
 * [ ] [Bitbucket](https://bitbucket.org)
 
 注:
-* 使用前请确认已在迁移源和目的Git服务器上添加了`SSH Key`
-* 目前只能迁移指定用户下的仓库, 即`:username/:repo`, 不包括参与的或者组织的仓库
+* **`Coding` 和 `Bitbucket` 只支持迁出**
+* 使用前请确认已在迁移源和目的Git服务器上添加了 `SSH Key`
+* 目前只能迁移指定用户下的仓库, 即 `:username/:repo`, 不包括参与的或者组织的仓库
 * 迁移包括commits、branches和tags, 不包括issues、pr和wiki
 * 影响迁移速度的因素: Git服务器带宽、本地网速
 
@@ -34,6 +31,10 @@ Migrate repos from one GitServer to another. Git 仓库迁移助手
 * Python
 
 本人开发环境: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
+
+## 依赖
+
+* [Requests](https://2.python-requests.org/en/master/)
 
 ## 配置
 
@@ -66,12 +67,14 @@ pipenv run python gigrator.py
     2. 拉取源Git服务器的仓库
     3. 在目的Git服务器创建仓库
     4. 向目的Git服务器推送仓库
+    
+## 希望
 
-## Packages
+希望大家可以尽情放肆地给这个项目提 **Issues/PR** :pray:
 
-* [Requests](https://2.python-requests.org/en/master/)
 
-## Docs
+
+## 文档
 
 ### GitLab
 
@@ -101,13 +104,9 @@ pipenv run python gigrator.py
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
 
-### Coding
-
-* [Open API](https://open.coding.net/open-api/?_ga=2.234006813.220305798.1563503634-1235584671.1544277191)
-
 ### Bitbucket
 
-* [API](https://confluence.atlassian.com/bitbucket/rest-apis-222724129.html)
+* [API](https://developer.atlassian.com/bitbucket/api/2/reference/?_ga=2.171048931.291787321.1563811851-293193087.1563504921)
 
 ## License
 

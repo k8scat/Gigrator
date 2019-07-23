@@ -1,4 +1,4 @@
-# type Git服务器类型, 例如: gitee, github, gitlab, gitea, gogs, coding, bitbucket, 必填
+# type Git服务器类型, 例如: gitee, github, gitlab, gitea, gogs, bitbucket, 必填
 # self_hosted 是否是自托管的Git服务器, 例如: gitlab, gitea, gogs, 默认为False
 # username 所在Git服务器的用户名, 必填
 # token 用户所在Git服务器的授权令牌, 必填
