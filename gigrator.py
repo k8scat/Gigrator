@@ -1,12 +1,12 @@
 import requests
-import config as config
+import private as config
 import json
 import os
 import sys
 from urllib import parse
 
 # 支持的Git服务器
-support = ['gitlab', 'github', 'gitee', 'gitea', 'coding']
+support = ['gitlab', 'github', 'gitee', 'gitea', 'coding', 'gogs']
 
 # 仓库存放目录
 repos_dir = os.getcwd() + '/repos/'
@@ -48,12 +48,12 @@ def list_repos(server):
         list_repos_url = api + '/user/repos?access_token=' + token \
                          + '&type=personal&sort=full_name&per_page=100&page='
 
-    elif server_type == 'gitea':
+    elif server_type == 'gitea' or server_type == 'gogs':
         # GET
         # ​/user​/repos
         # List the repos that the authenticated user owns or has access to
         # gitea没有做分页: https://github.com/go-gitea/gitea/issues/7515
-        list_repos_url = api + '/user/repos?access_token=' + token
+        list_repos_url = api + '/user/repos'
 
         r = requests.get(list_repos_url, headers=headers)
         repos = json.loads(r.content.decode('utf-8'))
@@ -102,7 +102,6 @@ def list_repos(server):
         r = requests.get(list_repos_url + str(page), headers=headers)
         if r.status_code == 200:
             repos = json.loads(r.content.decode('utf-8'))
-            print(r.content.decode('utf-8'))
             if len(repos) == 0:
                 break
             all_repos.extend(repos)
@@ -150,11 +149,11 @@ def is_existed(server, repo_name):
         # 获取用户的某个仓库: GET /repos/{owner}/{repo}
         # https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepo
         check_url = api + '/repos/' + username + '/' + repo_name + '?access_token=' + token
-    elif server_type == 'gitea':
+    elif server_type == 'gitea' or server_type == 'gogs':
         # GET
         # ​/repos​/{owner}​/{repo}
         # Get a repository
-        check_url = api + '/repos/' + username + '/' + repo_name + '?access_token=' + token
+        check_url = api + '/repos/' + username + '/' + repo_name
 
     r = requests.get(check_url, headers=headers)
     if r.status_code == 200:
@@ -251,7 +250,7 @@ def create_repo(server, repo, source_type):
         data = json.dumps(json_data)
         create_repo_url = api + '/user/repos'
 
-    elif server_type == 'gitea':
+    elif server_type == 'gitea' or server_type == 'gogs':
         # POST
         # ​/user​/repos
         # Create a repository
@@ -265,7 +264,7 @@ def create_repo(server, repo, source_type):
         # bug
         # \u200b: 看不见的分隔符 Zero-width space
         # create_repo_url = config.gitea_api + '/user​/repos?access_token=' + config.gitea_token
-        create_repo_url = api + '/user/repos?access_token=' + token
+        create_repo_url = api + '/user/repos'
 
     r = requests.post(create_repo_url, headers=headers, data=data)
     if r.status_code != 201:
@@ -342,7 +341,13 @@ def autoconfig(config):
     server_type = config['type']
     username = config['username']
     token = config['token']
-    self_hosted = config['self_hosted']
+    url = config['url']
+
+    if server_type == 'gitlab' or server_type == 'gitea' or server_type == 'gogs':
+        if url == '' or url is None:
+            print('gitlab, gitea 和 gogs 需要设置url')
+            return None
+
     if server_type == '' or server_type is None:
         print('没有配置type')
         return None
@@ -356,13 +361,6 @@ def autoconfig(config):
     if server_type not in support:
         print('暂不支持此类型的Git服务器: ' + server_type)
         return None
-
-    url = None
-    if self_hosted:
-        url = config['url']
-        if url is None or url == '':
-            print('自托管的Git服务器需要设置访问地址 url')
-            return None
 
     if server_type == 'github':
         config['ssh_prefix'] = 'git@github.com:'
@@ -382,24 +380,16 @@ def autoconfig(config):
         config['headers'] = {
             'PRIVATE-TOKEN': config['token']
         }
-        if self_hosted:
-            config['ssh_prefix'] = 'git@' + url.split('://')[1] + ':'
-            config['api'] = url + '/api/v4'
-        else:
-            config['ssh_prefix'] = 'git@gitlab.com:'
-            config['api'] = 'https://gitlab.com/api/v5'
+        config['ssh_prefix'] = 'git@' + url.split('://')[1] + ':'
+        config['api'] = url + '/api/v4'
 
-    elif server_type == 'gitea':
+    elif server_type == 'gitea' or server_type == 'gogs':
         config['headers'] = {
-            'accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'token ' + config['token']
         }
-        if self_hosted:
-            config['ssh_prefix'] = 'git@' + url.split('://')[1] + ':'
-            config['api'] = url + '/api/v1'
-        else:
-            config['ssh_prefix'] = 'git@gitea.com:'
-            config['api'] = 'https://gitea.com/api/v1'
+        config['ssh_prefix'] = 'git@' + url.split('://')[1] + ':'
+        config['api'] = url + '/api/v1'
 
     elif server_type == 'coding':
         config['headers'] = {
@@ -409,6 +399,18 @@ def autoconfig(config):
         config['api'] = 'https://coding.net'
 
     return config
+
+
+def is_empty(server_type, repo):
+    """
+    检查是否为空仓库
+
+    :param server_type: Git服务器配置
+    :param repo: 完整的仓库信息
+    :return: 是否为空仓库
+    """
+    if server_type == 'gitlab':
+        return repo['empty_repo']
 
 
 if __name__ == "__main__":
@@ -441,6 +443,7 @@ if __name__ == "__main__":
 
     # 输入需要迁移的仓库
     migrate_repos = input('请指定需要迁移的仓库(例如: repo1_name, repo2_name, 默认迁移所有仓库): ').replace(' ', '').split(',')
+    print(migrate_repos)
 
     success_count = 0
     failed_repos = []
@@ -458,7 +461,6 @@ if __name__ == "__main__":
             else:
                 print('仓库 ' + repo['name'] + ' 迁移成功!')
                 success_count += 1
-            break
 
     # 迁移指定仓库
     else:

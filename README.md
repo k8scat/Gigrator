@@ -17,11 +17,10 @@ Migrate repos from one GitServer to another.
 * [x] [GitHub](https://github.com/)
 * [x] [Gitea](https://gitea.io/zh-cn/)
 * [x] [Coding](https://coding.net/)
-* [ ] [Gogs](https://gogs.io/)
-* [ ] [Bitbucket](https://bitbucket.org)
+* [x] [Gogs](https://gogs.io/)
 
 Note:
-* **`Coding` and `Bitbucket` only support migrating out**
+* **`Coding` only support migrating out**
 * Make sure you have added `SSH Key` on GitServers before using
 * Only support migrating repos the specified user owned like `:username/:repo`, not include repos participated in or belonged tp groups
 * Migration include all commits, branches and tags, not include issues, pr and wiki
@@ -105,10 +104,6 @@ Expect **Issues/PR** :pray:
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
-
-### Bitbucket
-
-* [API](https://developer.atlassian.com/bitbucket/api/2/reference/?_ga=2.171048931.291787321.1563811851-293193087.1563504921)
 
 ## License
 

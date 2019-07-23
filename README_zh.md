@@ -17,11 +17,10 @@ Git 仓库迁移助手
 * [x] [GitHub](https://github.com/)
 * [x] [Gitea](https://gitea.io/zh-cn/)
 * [x] [Coding](https://coding.net/)
-* [ ] [Gogs](https://gogs.io/)
-* [ ] [Bitbucket](https://bitbucket.org)
+* [x] [Gogs](https://gogs.io/)
 
 注:
-* **`Coding` 和 `Bitbucket` 只支持迁出**
+* **`Coding` 只支持迁出**
 * 使用前请确认已在迁移源和目的Git服务器上添加了 `SSH Key`
 * 目前只能迁移指定用户下的仓库, 即 `:username/:repo`, 不包括参与的或者组织的仓库
 * 迁移包括commits、branches和tags, 不包括issues、pr和wiki
@@ -105,10 +104,6 @@ pipenv run python gigrator.py
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
-
-### Bitbucket
-
-* [API](https://developer.atlassian.com/bitbucket/api/2/reference/?_ga=2.171048931.291787321.1563811851-293193087.1563504921)
 
 ## 开源许可协议
 
