@@ -1,6 +1,27 @@
 import threading
 
-from gigrator import set_failed_repos, set_success_count
+lock = threading.Lock()
+
+success_count = 0
+failed_repos = []
+
+
+def set_failed_repos(repo_name):
+    global failed_repos
+    failed_repos.append(repo_name)
+
+
+def set_success_count():
+    global success_count
+    success_count += 1
+
+
+def get_failed_repos():
+    return failed_repos
+
+
+def get_success_count():
+    return success_count
 
 
 class WorkThread(threading.Thread):
@@ -12,10 +33,15 @@ class WorkThread(threading.Thread):
 
     def run(self):
         from migrate import migrate
-        r = migrate(repo=self.repo, source=self.source, dest=self.dest)
-        if r:
-            # print(repo['name'] + ' 仓库迁移失败')
-            set_failed_repos(self.repo['name'])
+        if migrate(repo=self.repo, source=self.source, dest=self.dest):
+            lock.acquire()
+            try:
+                set_success_count()
+            finally:
+                lock.release()
         else:
-            # print('仓库 ' + repo['name'] + ' 迁移成功!')
-            set_success_count()
+            lock.acquire()
+            try:
+                set_failed_repos(self.repo['name'])
+            finally:
+                lock.release()

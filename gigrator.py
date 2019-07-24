@@ -1,23 +1,9 @@
 import json
 import os
 import sys
-
 import requests
-
-# import private as config
-import config
+import config as config
 from settings import support, repos_dir
-
-success_count = 0
-failed_repos = []
-
-
-def set_failed_repos(data):
-    failed_repos.append(data)
-
-
-def set_success_count(data=success_count):
-    data += 1
 
 
 def list_repos(server):
@@ -25,7 +11,7 @@ def list_repos(server):
     列出指定用户在Git服务器上拥有的所有的仓库(owner)
 
     :param server: Git服务器配置
-    :return: 仓库列表
+    :return: list
     """
     server_type = server['type']
     api = server['api']
@@ -141,7 +127,7 @@ def autoconfig(config):
     headers: 自动配置
 
     :param config: 基本配置信息
-    :return: 完整的配置信息
+    :return: dict
     """
     # 防止出现配置时大小写的问题
     config['type'] = config['type'].lower()
@@ -214,7 +200,7 @@ def is_empty(server_type, repo):
 
     :param server_type: Git服务器配置
     :param repo: 完整的仓库信息
-    :return: 是否为空仓库
+    :return: bool
     """
     if server_type == 'gitlab':
         return repo['empty_repo']
@@ -223,6 +209,16 @@ def is_empty(server_type, repo):
 def quit(signum, frame):
     print('终止所有迁移')
     sys.exit()
+
+
+def precheck(server):
+    """
+    检查sshkey和token是否配置无误
+
+    :param server: Git服务器配置
+    :return: bool
+    """
+    pass
 
 
 if __name__ == "__main__":
@@ -234,16 +230,13 @@ if __name__ == "__main__":
     if dest['type'] == 'coding':
         print('不支持迁入Coding')
         sys.exit(0)
-    elif dest['type'] == 'bitbucket':
-        print('不支持迁入Bitbucket')
-        sys.exit(0)
 
     print('检查源Git服务器配置...')
     source = autoconfig(config.source)
     if source is None:
         sys.exit(0)
 
-    # 创建repo临时目录
+    # 创建repos临时目录
     if not os.path.isdir(repos_dir):
         os.mkdir(repos_dir)
 
@@ -255,9 +248,10 @@ if __name__ == "__main__":
 
     # 输入需要迁移的仓库
     migrate_repos = input('请指定需要迁移的仓库(例如: repo1_name, repo2_name, 默认迁移所有仓库): ').replace(' ', '').split(',')
-    # 迁移所有仓库
+
     threads = []
-    from WorkThread import WorkThread
+    from WorkThread import WorkThread, get_failed_repos, get_success_count
+    # 迁移所有仓库
     if len(migrate_repos) == 1 and migrate_repos[0] == '':
         for repo in repos:
             threads.append(WorkThread(repo=repo, source=source, dest=dest))
@@ -274,8 +268,11 @@ if __name__ == "__main__":
 
     for t in threads:
         t.join()
+
+    success_count = get_success_count()
     print('成功迁移' + str(success_count) + '个仓库')
     # 打印迁移失败的repos
+    failed_repos = get_failed_repos()
     if len(failed_repos) != 0:
         print('迁移失败的仓库:')
         for failed_repo in failed_repos:

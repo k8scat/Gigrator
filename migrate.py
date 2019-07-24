@@ -1,10 +1,7 @@
 import requests
-import config as config
 import json
 import os
-import sys
 from urllib import parse
-
 from settings import repos_dir
 
 
@@ -14,7 +11,7 @@ def is_existed(server, repo_name):
 
     :param server: Git服务器配置
     :param repo_name: 仓库名
-    :return: 是否存在同名仓库
+    :return: bool
     """
     server_type = server['type']
     username = server['username']
@@ -55,7 +52,7 @@ def clone_repo(server, repo_name):
 
     :param server: Git服务器的配置
     :param repo_name: 仓库名
-    :return: 仓库在本地的路径
+    :return: str
     """
 
     # 不同用户的仓库存放在单独的目录下(基于repos_dir)
@@ -87,7 +84,7 @@ def create_repo(server, repo, source_type):
     :param server: Git服务器配置
     :param repo: 完整的仓库信息
     :param source_type: 仓库所在源Git服务器的类型
-    :return: 是否成功创建仓库
+    :return: bool
     """
     server_type = server['type']
     api = server['api']
@@ -168,7 +165,7 @@ def push_repo(server, repo_name, repo_dir):
     :param server: Git服务器配置
     :param repo_name: 仓库名
     :param repo_dir: 仓库在本地的路径
-    :return: 是否成功推送仓库
+    :return: bool
     """
     push_cmd = 'cd ' + repo_dir + ' && git push --mirror ' \
                + server['ssh_prefix'] + server['username'] + '/' + repo_name + '.git'
@@ -182,29 +179,24 @@ def migrate(repo, source, dest):
     :param repo: 完整的仓库信息
     :param source: 源Git服务器配置
     :param dest: 目的Git服务器配置
-    :return: 1表示将终止所有迁移, 2表示单个仓库迁移失败
+    :return: bool
     """
     repo_name = repo['name']
 
-    # if is_existed(dest, repo_name):
-    #     print('您所在目的Git服务已存在' + repo_name + '仓库! 故此仓库无法迁移')
-    #     return 1
-        # TODO important
+    if is_existed(dest, repo_name):
+        print('您所在目的Git服务已存在' + repo_name + '仓库! 故此仓库无法迁移')
+        return False
 
     repo_dir = clone_repo(source, repo_name)
     if repo_dir is None:
-        print('请确认源Git服务器已经添加SSH Key')
-        return 1
-    else:
-        print('仓库拉取成功: ' + repo_name)
+        return False
+    print('仓库拉取成功: ' + repo_name)
 
     if not create_repo(dest, repo, source['type']):
-        return 1
-    else:
-        print('仓库创建成功: ' + repo_name)
+        return False
+    print('仓库创建成功: ' + repo_name)
 
     if not push_repo(dest, repo_name, repo_dir):
-        print('请确认目的Git服务器已经添加SSH Key')
-        return 1
-    else:
-        print('仓库推送成功: ' + repo_name)
+        return False
+    print('仓库推送成功: ' + repo_name)
+    return True
