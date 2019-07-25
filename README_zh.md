@@ -6,7 +6,6 @@ Git 仓库迁移助手
 
 ## 待做
 
-* [ ] **多线程并发迁移**
 * [ ] **[ADMIN]迁移整个Git服务器的仓库**
 * [ ] 检测是否为空仓库(空仓库将导致推送失败)
 
@@ -104,6 +103,10 @@ pipenv run python gigrator.py
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
+
+### Coding
+
+* [开放 API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
 
 ## 开源许可协议
 

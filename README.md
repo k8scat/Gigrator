@@ -6,7 +6,6 @@ Migrate repos from one GitServer to another.
 
 ## Todo
 
-* [ ] **Concurrent Migration**
 * [ ] **[ADMIN]Migrate all repos on a GitServer**
 * [ ] Inspect the empty repo
 
@@ -22,8 +21,8 @@ Migrate repos from one GitServer to another.
 Note:
 * **`Coding` only support migrating out**
 * Make sure you have added `SSH Key` on GitServers before using
-* Only support migrating repos the specified user owned like `:username/:repo`, not include repos participated in or belonged tp groups
-* Migration include all commits, branches and tags, not include issues, pr and wiki
+* Only support migrating repos the specified user owned and repo path like `:username/:repo`, not include repos participated in or belonged to groups
+* Migration includes all commits, branches and tags, not include issues, pr and wiki
 * Factors affecting migration speed: GitServer bandwidth and local network speed
 
 ## Environment
@@ -104,6 +103,10 @@ Expect **Issues/PR** :pray:
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
+
+### Coding
+
+* [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
 
 ## License
 
