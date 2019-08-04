@@ -50,16 +50,12 @@ def list_repos(server):
         list_repos_url = api + '/user/repos'
 
         r = requests.get(list_repos_url, headers=headers)
-        repos = json.loads(r.content.decode('utf-8'))
-
-        for repo in repos:
-            if repo['owner']['username'] != username:
-                repos.remove(repo)
-            else:
-                print(repo['name'])
-
-        print('总共' + str(len(repos)) + '个仓库')
-        return repos
+        if r.status_code == 200:
+            repos = json.loads(r.content.decode('utf-8'))
+            for repo in repos:
+                if repo['owner']['username'] == username:
+                    all_repos.append(repo)
+        return all_repos
 
     elif server_type == 'coding':
         # 当前用户的项目列表
@@ -68,27 +64,24 @@ def list_repos(server):
         list_repos_url = api + '/api/user/projects?type=all&pageSize=10&page='
 
         r = requests.get(list_repos_url + str(page), headers=headers)
-        content = json.loads(r.content.decode('utf-8'))
-        totalPage = content['data']['totalPage']
-        repos = content['data']['list']
-        if len(repos) == 0:
-            return None
-        for repo in repos:
-            if repo['owner_user_name'] == username:
-                all_repos.append(repo)
-
-        while page < totalPage:
-            page += 1
-            r = requests.get(list_repos_url + str(page), headers=headers)
+        if r.status_code == 200:
             content = json.loads(r.content.decode('utf-8'))
+            totalPage = content['data']['totalPage']
             repos = content['data']['list']
             for repo in repos:
                 if repo['owner_user_name'] == username:
                     all_repos.append(repo)
 
-        for repo in all_repos:
-            print(repo['name'])
-        print('总共' + str(len(all_repos)) + '个仓库')
+            while page < totalPage:
+                page += 1
+                r = requests.get(list_repos_url + str(page), headers=headers)
+                if r.status_code == 200:
+                    content = json.loads(r.content.decode('utf-8'))
+                    repos = content['data']['list']
+                    for repo in repos:
+                        if repo['owner_user_name'] == username:
+                            all_repos.append(repo)
+
         return all_repos
 
     # 当没有授权时, 可能只会返回公开项目(至少gitlab会)
@@ -102,15 +95,11 @@ def list_repos(server):
             page += 1
         elif r.status_code == 401:
             print('授权令牌无效')
-            return None
+            break
         else:
             print(r.content.decode('utf-8'))
-            return None
+            break
 
-    # 打印仓库名
-    for repo in all_repos:
-        print(repo['name'])
-    print('总共' + str(len(all_repos)) + '个仓库')
     return all_repos
 
 
@@ -205,10 +194,19 @@ def is_empty(server_type, repo):
     if server_type == 'gitlab':
         return repo['empty_repo']
 
+    if server_type == 'github':
+        return repo['size'] == 0
 
-def quit(signum, frame):
-    print('终止所有迁移')
-    sys.exit()
+    # Gitee 暂无法判断是否为空仓库
+    if server_type == 'gitee':
+        return False
+
+    if server_type == 'gitea' or server_type == 'gogs':
+        return repo['empty']
+
+    # Coding 暂无法判断是否为空仓库
+    if server_type == 'coding':
+        return False
 
 
 def precheck(server):
@@ -245,6 +243,15 @@ if __name__ == "__main__":
     # 没有仓库的话直接退出
     if len(repos) == 0:
         sys.exit(0)
+
+    # 打印仓库名
+    for repo in repos:
+        # 排除空仓库
+        if is_empty(source['type'], repo):
+            repos.remove(repo)
+        else:
+            print(repo['name'])
+    print('总共' + str(len(repos)) + '个仓库')
 
     # 输入需要迁移的仓库
     migrate_repos = input('请指定需要迁移的仓库(例如: repo1_name, repo2_name, 默认迁移所有仓库): ').replace(' ', '').split(',')

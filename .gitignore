@@ -5,3 +5,4 @@ repos
 .idea
 __pycache__
 test.py
+push.sh
