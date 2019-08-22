@@ -183,42 +183,6 @@ def autoconfig(config):
     return config
 
 
-def is_empty(server_type, repo):
-    """
-    检查是否为空仓库
-
-    :param server_type: Git服务器配置
-    :param repo: 完整的仓库信息
-    :return: bool
-    """
-    if server_type == 'gitlab':
-        return repo['empty_repo']
-
-    if server_type == 'github':
-        return repo['size'] == 0
-
-    # Gitee 暂无法判断是否为空仓库
-    if server_type == 'gitee':
-        return False
-
-    if server_type == 'gitea' or server_type == 'gogs':
-        return repo['empty']
-
-    # Coding 暂无法判断是否为空仓库
-    if server_type == 'coding':
-        return False
-
-
-def precheck(server):
-    """
-    检查sshkey和token是否配置无误
-
-    :param server: Git服务器配置
-    :return: bool
-    """
-    pass
-
-
 if __name__ == "__main__":
 
     print('检查目的Git服务器配置...')
@@ -238,6 +202,10 @@ if __name__ == "__main__":
     if not os.path.isdir(repos_dir):
         os.mkdir(repos_dir)
 
+    # 每次迁移前删除repos临时目录中所有的文件
+    cmd = 'rm -rf ' + repos_dir + '*'
+    os.system(cmd)
+
     # 列出在源Git服务器上所有的仓库
     repos = list_repos(source)
     # 没有仓库的话直接退出
@@ -246,11 +214,7 @@ if __name__ == "__main__":
 
     # 打印仓库名
     for repo in repos:
-        # 排除空仓库
-        if is_empty(source['type'], repo):
-            repos.remove(repo)
-        else:
-            print(repo['name'])
+        print(repo['name'])
     print('总共' + str(len(repos)) + '个仓库')
 
     # 输入需要迁移的仓库
@@ -284,3 +248,5 @@ if __name__ == "__main__":
         print('迁移失败的仓库:')
         for failed_repo in failed_repos:
             print(failed_repo)
+
+        print('请检查目的Git服务器是否存在同名仓库或者仓库是否为空仓库')

@@ -62,12 +62,6 @@ def clone_repo(server, repo_name):
 
     # 检查本地是否存在repo, 存在则删除
     repo_dir = clone_space + repo_name + '.git'
-    if os.path.isdir(repo_dir):
-        cmd = 'rm -rf ' + repo_dir
-        if os.system(cmd) != 0:
-            print('删除已有仓库失败')
-            return None
-
     clone_cmd = 'cd ' + clone_space + ' && git clone --bare ' + server['ssh_prefix'] \
                 + server['username'] + '/' + repo_name + '.git'
 
@@ -172,6 +166,32 @@ def push_repo(server, repo_name, repo_dir):
     return os.system(push_cmd) == 0
 
 
+def is_empty(server_type, repo):
+    """
+    检查是否为空仓库
+
+    :param server_type: Git服务器配置
+    :param repo: 完整的仓库信息
+    :return: bool
+    """
+    if server_type == 'gitlab':
+        return repo['empty_repo']
+
+    if server_type == 'github':
+        return repo['size'] == 0
+
+    # Gitee 暂无法判断是否为空仓库
+    if server_type == 'gitee':
+        return False
+
+    if server_type == 'gitea' or server_type == 'gogs':
+        return repo['empty']
+
+    # Coding 暂无法判断是否为空仓库
+    if server_type == 'coding':
+        return False
+
+
 def migrate(repo, source, dest):
     """
     迁移单个仓库
@@ -185,6 +205,10 @@ def migrate(repo, source, dest):
 
     if is_existed(dest, repo_name):
         print('您所在目的Git服务已存在' + repo_name + '仓库! 故此仓库无法迁移')
+        return False
+
+    if is_empty(source['type'], repo):
+        print('空仓库不做迁移')
         return False
 
     repo_dir = clone_repo(source, repo_name)
