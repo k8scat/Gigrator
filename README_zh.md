@@ -4,10 +4,15 @@
 
 Git 仓库迁移助手
 
+码云: https://gitee.com/hsowan/Gigrator 
+
+GitHub: https://github.com/hsowan/gigrator
+
+![test.png](./images/test.png)
+
 ## 待做
 
 * [ ] **[ADMIN]迁移整个Git服务器的仓库**
-* [ ] 检测是否为空仓库(空仓库将导致推送失败)
 
 ## 支持
 

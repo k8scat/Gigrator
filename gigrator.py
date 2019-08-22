@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import requests
-import config as config
+import private as config
 from settings import support, repos_dir
 
 

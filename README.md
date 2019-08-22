@@ -4,10 +4,15 @@ en | [zh](./README_zh.md)
 
 Migrate repos from one GitServer to another.
 
+Gitee: https://gitee.com/hsowan/Gigrator 
+
+GitHub: https://github.com/hsowan/gigrator
+
+![test.png](./images/test.png)
+
 ## Todo
 
 * [ ] **[ADMIN]Migrate all repos on a GitServer**
-* [ ] Inspect the empty repo
 
 ## Support
 
@@ -42,7 +47,7 @@ My own development environment: `git version 2.20.1 (Apple Git-117)` + `Python 3
 
 ## Start
 
-```bash
+```shell script
 # Install pipenv
 pip install --user pipenv
 
