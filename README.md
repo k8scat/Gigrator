@@ -4,10 +4,6 @@ en | [zh](./README_zh.md)
 
 Migrate repos from one GitServer to another.
 
-Gitee: https://gitee.com/hsowan/Gigrator 
-
-GitHub: https://github.com/hsowan/gigrator
-
 ![test.png](./images/test.png)
 
 ## Todo

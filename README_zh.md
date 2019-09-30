@@ -4,10 +4,6 @@
 
 Git 仓库迁移助手
 
-码云: https://gitee.com/hsowan/Gigrator 
-
-GitHub: https://github.com/hsowan/gigrator
-
 ![test.png](./images/test.png)
 
 ## 待做
