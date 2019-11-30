@@ -2,7 +2,11 @@
 
 [en](./README.md) | zh
 
-Git 仓库迁移助手
+Git 仓库批量迁移助手
+
+GitHub: https://github.com/hsowan-me/Gigrator
+
+码云: https://github.com/hsowan-me/Gigrator
 
 ![test.png](./images/test.png)
 
