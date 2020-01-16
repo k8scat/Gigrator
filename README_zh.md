@@ -2,17 +2,17 @@
 
 [en](./README.md) | zh
 
-Git 仓库批量迁移助手
+Git 仓库 **批量**  迁移助手
 
 GitHub: https://github.com/hsowan-me/Gigrator
 
-码云: https://github.com/hsowan-me/Gigrator
+码云: https://gitee.com/hsowan/Gigrator
 
 ![test.png](./images/test.png)
 
 ## 待做
 
-* [ ] **[ADMIN]迁移整个Git服务器的仓库**
+* [ ] **[ADMIN]迁移属于不同所有者的所有仓库**
 
 ## 支持
 

@@ -2,17 +2,17 @@
 
 en | [zh](./README_zh.md)
 
-Migrate repos from one GitServer to another.
+Migrate **REPOS** from one GitServer to another.
 
 GitHub: https://github.com/hsowan-me/Gigrator
 
-码云: https://github.com/hsowan-me/Gigrator
+码云: https://gitee.com/hsowan/Gigrator
 
 ![test.png](./images/test.png)
 
 ## Todo
 
-* [ ] **[ADMIN]Migrate all repos on a GitServer**
+* [ ] **[ADMIN]Migrate all repos belong to different owners**
 
 ## Support
 
