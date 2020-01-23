@@ -2,7 +2,8 @@ import json
 import os
 import sys
 import requests
-import private as config
+# import private as config  # dev
+import config  # prod
 from settings import support, repos_dir
 
 
