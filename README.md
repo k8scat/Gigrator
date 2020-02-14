@@ -1,18 +1,39 @@
 # Gigrator
 
-en | [zh](./README_zh.md)
-
-Migrate **REPOS** from one GitServer to another.
+Git 仓库批量迁移小助手
 
 GitHub: https://github.com/hsowan-me/Gigrator
 
 码云: https://gitee.com/hsowan/Gigrator
 
-![test.png](./images/test.png)
+![gigrator.png](images/gigrator.png)
 
-## Todo
+## Start
 
-* [ ] **[ADMIN]Migrate all repos belong to different owners**
+```shell script
+git clone git@gitee.com:hsowan/Gigrator.git
+cd Gigrator
+pip3 install -r requirements.txt
+
+# 迁移前需在配置文件(settings.py)中配置 SOURCE_GIT 和 DEST_GIT
+# 配置参考: settings_example.py
+python3 gigrator.py
+
+```
+
+## Develop
+
+```python
+# Base class
+class Git:
+    pass
+
+
+# Other GitServer class should inherit Git
+class OtherGit(Git):
+    pass
+
+```
 
 ## Support
 
@@ -22,76 +43,53 @@ GitHub: https://github.com/hsowan-me/Gigrator
 * [x] [Gitea](https://gitea.io/zh-cn/)
 * [x] [Coding](https://coding.net/)
 * [x] [Gogs](https://gogs.io/)
+* [ ] [Bitbucket](https://bitbucket.org/)
 
 Note:
-* **`Coding` only support migrating out**
-* Make sure you have added `SSH Key` on GitServers before using
-* Only support migrating repos the specified user owned and repo path like `:username/:repo`, not include repos participated in or belonged to groups
-* Migration includes all commits, branches and tags, not include issues, pr and wiki
-* Factors affecting migration speed: GitServer bandwidth and local network speed
+* 不支持迁移至 `Coding`, 可从 Coding 迁移至其他 `Git` 服务器
+* 由于 `Coding` 的升级, 其基础 `API` 不再是 `https://coding.net`, 而改为: `https://{username}.coding.net`
+* 迁移前请确认已在Git服务器上添加 `SSH Key`
+* 只能迁移指定用户下的仓库, 即 `{username}/{repo_name}`, 不包括参与的或者组织的仓库
+* 迁移包括commits、branches和tags, 不包括issues、pr和wiki
 
 ## Environment
 
 * Git
 * Python
 
-My own development environment: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
+开发环境: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
 
-## Dependency
+## Dependencies
 
 * [Requests](https://2.python-requests.org/en/master/)
 
-## Config
-
-[config.py](./config.py)
-
-## Start
-
-```shell script
-# Install pipenv
-pip install --user pipenv
-
-# Clone the repo
-git clone git@github.com:hsowan/Gigrator.git
-cd gigrator
-
-# Init venv
-pipenv --python 3
-pipenv install
-
-# Run
-pipenv run python gigrator.py
-
-```
-
-## Flow
-
-1. Provide the source and the dest GitServers for migration
-2. List all repo on the source GitServer
-3. Input repos to migrate
-4. Migrate the selected repos:
-    1. Inspect that the dest GitServer has a repository of the same name
-    2. Clone repo from the source GitServer
-    3. Create repo on the dest GitServer
-    4. Push repo to the dest GitServer
-    
-## Wish
-
-Expect **Issues/PR** :pray:
-
-## Docs
+## References
 
 ### GitLab
 
-* [GitLab API](https://docs.gitlab.com/ee/api/)
+* [GitLab API Docs](https://docs.gitlab.com/ee/api/)
 * [GitLab Create Repo](https://docs.gitlab.com/ee/api/projects.html#create-project)
 * [Project visibility level](https://docs.gitlab.com/ee/api/projects.html#project-visibility-level)
 
-### GitHub
+## [GitLab GraphQL API](https://docs.gitlab.com/ee/api/graphql/)
 
-* [GitHub API v3](https://developer.github.com/v3/)
+Can not create a project!
+
+It will co-exist with the current v4 REST API. If we have a v5 API, this should be a compatibility layer on top of GraphQL.
+
+* [Introduction to GraphQL](https://developer.github.com/v4/guides/intro-to-graphql/)
+* [GraphQL API Resources](https://docs.gitlab.com/ee/api/graphql/reference/index.html)
+
+### [GitHub REST API v3](https://developer.github.com/v3/)
+
 * [GitHub Create Repo](https://developer.github.com/v3/repos/#create)
 * [GitHub Personal Access Token](https://github.com/settings/tokens)
+
+## [GitHub GraphQL API v4](https://developer.github.com/v4/)
+
+* [GraphQL resource limitations](https://developer.github.com/v4/guides/resource-limitations/)
+* [Forming Calls with GraphQL](https://developer.github.com/v4/guides/forming-calls/)
+
 
 ### Gitee
 
@@ -108,10 +106,25 @@ Expect **Issues/PR** :pray:
 ### Gogs
 
 * [gogs/docs-api](https://github.com/gogs/docs-api)
+* [Demo site](https://try.gogs.io/)
 
 ### Coding
 
 * [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
+
+### GraphQL Client
+
+* [sgqlc](https://github.com/profusion/sgqlc)
+
+## How to choose between Gitea and Gogs
+
+Gitea vs. Gogs on their contributions, 2/13/2020
+
+![](./images/gitea-contributions.png)
+
+![](./images/gogs-contributions.png)
+
+I am using Gitea, https://code.ncucoder.com
 
 ## License
 

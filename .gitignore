@@ -1,8 +1,7 @@
 .vscode
 *.json
-private.py
-repos
+.repos
 .idea
 __pycache__
+ENV
 test.py
-push.sh
