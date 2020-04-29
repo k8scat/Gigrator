@@ -314,7 +314,7 @@ class Gitee(Git):
             'private': is_private
         }
         url = f'{self.api}/user/repos'
-        r = requests.post(url, data=data, headers=self.headers)
+        r = requests.post(url, json=data, headers=self.headers)
         return r.status_code == 201
 
     def list_repos(self) -> list:
@@ -427,7 +427,7 @@ class Coding(Git):
                 total_page = data['data']['totalPage']
                 repos = data['data']['list']
                 for repo in repos:
-                    if repo['owner_user_name'] == self.username:
+                    if str.lower(repo['owner_user_name']) == str.lower(self.username):
                         all_repos.append(dict(name=repo['name'],
                                               desc=repo['description'],
                                               is_private=not repo['is_public']))
@@ -442,7 +442,7 @@ class Coding(Git):
                         data = r.json()
                         repos = data['data']['list']
                         for repo in repos:
-                            if repo['owner_user_name'] == self.username:
+                            if str.lower(repo['owner_user_name']) == str.lower(self.username):
                                 all_repos.append(dict(name=repo['name'],
                                                       desc=repo['description'],
                                                       is_private=not repo['is_public']))
