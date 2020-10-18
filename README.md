@@ -1,6 +1,8 @@
 # Gigrator
 
-Git 仓库批量迁移小助手
+[Gigrator-go](https://github.com/hsowan-me/Gigrator/tree/go) is coming soon!
+
+Git 代码仓批量迁移
 
 GitHub: https://github.com/hsowan-me/Gigrator
 
@@ -115,16 +117,6 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 ### GraphQL Client
 
 * [sgqlc](https://github.com/profusion/sgqlc)
-
-## How to choose between Gitea and Gogs
-
-Gitea vs. Gogs on their contributions, 2/13/2020
-
-![](./images/gitea-contributions.png)
-
-![](./images/gogs-contributions.png)
-
-I am using Gitea, https://code.ncucoder.com
 
 ## License
 
