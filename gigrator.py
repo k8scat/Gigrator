@@ -139,7 +139,7 @@ class Gitlab(Git):
             'visibility': 'private' if is_private else 'public'
         }
         url = f'{self.api}/projects'
-        r = requests.post(url, data=data, headers=self.headers)
+        r = requests.post(url, data=json.dumps(data), headers=self.headers)
         return r.status_code == 201
 
     def list_repos(self) -> list:
@@ -369,7 +369,7 @@ class Gitea(Git):
             'private': is_private
         }
         url = f'{self.api}/user/repos'
-        r = requests.post(url, headers=self.headers, data=data)
+        r = requests.post(url, headers=self.headers, data=json.dumps(data))
         return r.status_code == 201
 
     def list_repos(self) -> list:
@@ -498,4 +498,3 @@ if __name__ == "__main__":
                     dest_git.push_repo(migrate_repo['name'], repo_dir)
         except Exception as e:
             logger.error(e)
-
