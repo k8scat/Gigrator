@@ -493,7 +493,7 @@ class GF(Git):
             "visibility_level": visibility_level
         }
         r = requests.post(url, headers=self.headers, json=data)
-        return r.status_code == 200
+        return r.status_code == 200 or r.status_code == 201
 
 
     def list_repos(self) -> list:
