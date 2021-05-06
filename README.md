@@ -114,6 +114,10 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 
 * [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
 
+
+### GF (腾讯工蜂)
+* [Open API](#https://code.tencent.com/help/api/prepare)
+
 ### GraphQL Client
 
 * [sgqlc](https://github.com/profusion/sgqlc)
