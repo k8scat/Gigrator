@@ -45,6 +45,7 @@ class OtherGit(Git):
 * [x] [Gitea](https://gitea.io/zh-cn/)
 * [x] [Coding](https://coding.net/)
 * [x] [Gogs](https://gogs.io/)
+* [x] [腾讯工蜂](https://code.tencent.com/)
 * [ ] [Bitbucket](https://bitbucket.org/)
 
 Note:

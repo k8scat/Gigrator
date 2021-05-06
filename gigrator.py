@@ -10,7 +10,7 @@ import logging
 import os
 import re
 import uuid
-from urllib.parse import quote,urlencode
+from urllib.parse import quote, urlencode
 import requests
 import settings
 
@@ -452,7 +452,7 @@ class Coding(Git):
         return all_repos
 
 
-#腾讯工蜂
+# 腾讯工蜂
 class GF(Git):
     def __init__(self, config: dict):
         super().__init__(config)
@@ -465,7 +465,7 @@ class GF(Git):
     def is_existed(self, repo_name: str) -> bool:
         # repo_name如果包含命名空间需要URL编码
         repo_name_encoded = urlencode(repo_name)
-        url = f'{self.api}/api/v3/projects/{repo_name_encoded}/repository/tree'
+        url = f'{self.api}/projects/{repo_name_encoded}/repository/tree'
         r = requests.get(url, headers=self.headers)
         if r.status_code == 200:
             return True
@@ -477,7 +477,7 @@ class GF(Git):
         url = self.api + "/projects"
         repo_full_name_list = repo_name.split("/")
         if len(repo_full_name_list) == 1:
-            repo_name_namespace = "null"
+            repo_name_namespace = ""
             repo_name_short = repo_name
         else:
             repo_name_namespace = repo_full_name_list[0]
@@ -492,7 +492,7 @@ class GF(Git):
             "description": desc,
             "visibility_level": visibility_level
         }
-        r = requests.post(url, headers=self.headers, data=json.dumps(data))
+        r = requests.post(url, headers=self.headers, json=data)
         return r.status_code == 200
 
 
