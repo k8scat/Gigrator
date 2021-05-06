@@ -10,7 +10,7 @@ import logging
 import os
 import re
 import uuid
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 import requests
 import settings
 
@@ -452,6 +452,73 @@ class Coding(Git):
         return all_repos
 
 
+# 腾讯工蜂
+class GF(Git):
+    def __init__(self, config: dict):
+        super().__init__(config)
+        self.headers = {
+            'PRIVATE-TOKEN': self.token
+        }
+        self.ssh_prefix = settings.GF_SSH_PREFIX
+        self.api = settings.GF_API
+
+    def is_existed(self, repo_name: str) -> bool:
+        # repo_name如果包含命名空间需要URL编码
+        repo_name_encoded = urlencode(repo_name)
+        url = f'{self.api}/projects/{repo_name_encoded}/repository/tree'
+        r = requests.get(url, headers=self.headers)
+        if r.status_code == 200:
+            return True
+        else:
+            return False
+
+    # repo_name = name_with_namespace
+    def create_repo(self, repo_name: str, desc: str, is_private: bool) -> bool:
+        url = self.api + "/projects"
+        repo_full_name_list = repo_name.split("/")
+        if len(repo_full_name_list) == 1:
+            repo_name_namespace = ""
+            repo_name_short = repo_name
+        else:
+            repo_name_namespace = repo_full_name_list[0]
+            repo_name_short = repo_full_name_list[1]
+        if is_private:
+            visibility_level = 0
+        else:
+            visibility_level = 10
+        data = {
+            "name": repo_name_short,
+            "namespace_id": repo_name_namespace,
+            "description": desc,
+            "visibility_level": visibility_level
+        }
+        r = requests.post(url, headers=self.headers, json=data)
+        return r.status_code == 200 or r.status_code == 201
+
+
+    def list_repos(self) -> list:
+        list_groups_url = self.api + '/groups'
+        all_groups = []
+        all_repos = []
+        r = requests.get(list_groups_url, headers=self.headers)
+        if r.status_code == 200:
+            repos = r.json()
+            for repo in repos:
+                all_groups.append(repo["id"])
+        for group in all_groups:
+            group_detail_url = list_groups_url + "/" + str(group)
+            r = requests.get(group_detail_url, headers=self.headers)
+            if r.status_code == 200:
+                group_detail = r.json()
+                for repo in group_detail["projects"]:
+                    all_repos.append(
+                        dict(name=repo["name_with_namespace"],
+                             desc=repo['description'],
+                             is_private=not repo['public'])
+                    )
+        return all_repos
+
+
 if __name__ == "__main__":
     if not os.path.isdir(settings.TEMP_DIR):
         os.mkdir(settings.TEMP_DIR)
@@ -468,6 +535,8 @@ if __name__ == "__main__":
         source_git = Gitea(settings.SOURCE_GIT)
     elif source_type == 'gitee':
         source_git = Gitee(settings.SOURCE_GIT)
+    elif source_type == "gf":
+        source_git = GF(settings.SOURCE_GIT)
     else:
         raise ValueError(f'暂不支持此类Git服务器: {source_type}')
 
@@ -481,6 +550,8 @@ if __name__ == "__main__":
         dest_git = Gitea(settings.DEST_GIT)
     elif dest_type == 'gitee':
         dest_git = Gitee(settings.DEST_GIT)
+    elif dest_type == "gf":
+        dest_type = GF(settings.DEST_GIT)
     else:
         raise ValueError(f'暂不支持此类Git服务器: {source_type}')
 
@@ -498,3 +569,6 @@ if __name__ == "__main__":
                     dest_git.push_repo(migrate_repo['name'], repo_dir)
         except Exception as e:
             logger.error(e)
+
+
+

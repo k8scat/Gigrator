@@ -45,6 +45,7 @@ class OtherGit(Git):
 * [x] [Gitea](https://gitea.io/zh-cn/)
 * [x] [Coding](https://coding.net/)
 * [x] [Gogs](https://gogs.io/)
+* [x] [腾讯工蜂](https://code.tencent.com/)
 * [ ] [Bitbucket](https://bitbucket.org/)
 
 Note:
@@ -113,6 +114,10 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 ### Coding
 
 * [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
+
+
+### GF (腾讯工蜂)
+* [Open API](https://code.tencent.com/help/api/prepare)
 
 ### GraphQL Client
 

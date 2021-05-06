@@ -28,7 +28,7 @@ DEST_GIT = {
 }
 
 # 支持的Git服务器
-SUPPORT_GITS = ['gitlab', 'github', 'gitee', 'gitea', 'coding', 'gogs']
+SUPPORT_GITS = ['gitlab', 'github', 'gitee', 'gitea', 'coding', 'gogs', 'gf']
 
 # 仓库暂存目录
 TEMP_DIR = os.path.join(os.path.dirname(__file__), '.repos')
@@ -51,3 +51,8 @@ CODING_SSH_PREFIX = 'git@e.coding.net:'
 
 # Gitea/Gogs
 GITEA_API_VERSION = '/api/v1'
+
+# 腾讯工蜂
+# 私有化部署请修改地址
+GF_SSH_PREFIX = 'git@code.tencent.com'
+GF_API = 'https://code.tencent.com/api/v3'
