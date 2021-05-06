@@ -117,7 +117,7 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 
 
 ### GF (腾讯工蜂)
-* [Open API](#https://code.tencent.com/help/api/prepare)
+* [Open API](https://code.tencent.com/help/api/prepare)
 
 ### GraphQL Client
 
