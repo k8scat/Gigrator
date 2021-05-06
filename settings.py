@@ -52,11 +52,7 @@ CODING_SSH_PREFIX = 'git@e.coding.net:'
 # Gitea/Gogs
 GITEA_API_VERSION = '/api/v1'
 
-
-#工蜂私有化部署
-#GF_SSH_PREFIX = 'git@git.xxx.com'
-#GF_API = 'https://git.xxx.com/api/v3'
-
-#腾讯工蜂
+# 腾讯工蜂
+# 私有化部署请修改地址
 GF_SSH_PREFIX = 'git@code.tencent.com'
 GF_API = 'https://code.tencent.com/api/v3'
