@@ -472,7 +472,7 @@ class GF(Git):
         else:
             return False
 
-    #repo_name = name_with_namespace
+    # repo_name = name_with_namespace
     def create_repo(self, repo_name: str, desc: str, is_private: bool) -> bool:
         url = self.api + "/projects"
         repo_full_name_list = repo_name.split("/")
