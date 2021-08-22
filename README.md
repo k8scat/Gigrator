@@ -1,26 +1,19 @@
 # Gigrator
 
-[Gigrator-go](https://github.com/hsowan-me/Gigrator/tree/go) is coming soon!
-
 Git 代码仓批量迁移
-
-GitHub: https://github.com/hsowan-me/Gigrator
-
-码云: https://gitee.com/hsowan/Gigrator
 
 ![gigrator.png](images/gigrator.png)
 
 ## Start
 
 ```shell script
-git clone git@gitee.com:hsowan/Gigrator.git
-cd Gigrator
+git clone git@github.com:hsowan/gigrator.git
+cd gigrator
 pip3 install -r requirements.txt
 
 # 迁移前需在配置文件(settings.py)中配置 SOURCE_GIT 和 DEST_GIT
 # 配置参考: settings_example.py
 python3 gigrator.py
-
 ```
 
 ## Develop
@@ -30,11 +23,9 @@ python3 gigrator.py
 class Git:
     pass
 
-
 # Other GitServer class should inherit Git
 class OtherGit(Git):
     pass
-
 ```
 
 ## Support
@@ -49,6 +40,7 @@ class OtherGit(Git):
 * [ ] [Bitbucket](https://bitbucket.org/)
 
 Note:
+
 * 不支持迁移至 `Coding`, 可从 Coding 迁移至其他 `Git` 服务器
 * 由于 `Coding` 的升级, 其基础 `API` 不再是 `https://coding.net`, 而改为: `https://{username}.coding.net`
 * 迁移前请确认已在Git服务器上添加 `SSH Key`
@@ -115,8 +107,8 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 
 * [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
 
-
 ### GF (腾讯工蜂)
+
 * [Open API](https://code.tencent.com/help/api/prepare)
 
 ### GraphQL Client
@@ -126,4 +118,3 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 ## License
 
 [MIT](https://github.com/hsowan/Gigrator/blob/master/LICENSE)
-
