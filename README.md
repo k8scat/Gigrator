@@ -1,5 +1,8 @@
 # Gigrator
 
+[![](https://img.shields.io/badge/GitHub-success)](https://github.com/k8scat/gigrator)
+[![](https://img.shields.io/badge/Gitee-red)](https://gitee.com/k8scat/gigrator)
+
 Git 代码仓批量迁移
 
 ![gigrator.png](images/gigrator.png)
@@ -7,7 +10,7 @@ Git 代码仓批量迁移
 ## Start
 
 ```shell script
-git clone git@github.com:hsowan/gigrator.git
+git clone https://github.com/k8scat/gigrator.git
 cd gigrator
 pip3 install -r requirements.txt
 
@@ -117,4 +120,4 @@ It will co-exist with the current v4 REST API. If we have a v5 API, this should 
 
 ## License
 
-[MIT](https://github.com/hsowan/Gigrator/blob/master/LICENSE)
+[MIT](https://github.com/k8scat/gigrator/blob/master/LICENSE)
