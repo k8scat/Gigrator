@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Git repositories migration tool.")
     parser.add_argument("-c", "--config", dest="cfg_file", default="./config.yml",
-                        help='config file (default: ./config.yml)')
+                        help="config file (default: ./config.yml)")
     args = parser.parse_args()
     return args
 
@@ -29,25 +29,25 @@ def git_factory(cfg: dict) -> Git:
 
     if provider == "gitlab":
         return gitlab.Gitlab(cfg)
-    if provider == 'github':
+    if provider == "github":
         return github.Github(cfg)
-    if provider == 'coding':
+    if provider == "coding":
         return coding.Coding(cfg)
-    if provider in ['gitea', 'gogs']:
+    if provider in ["gitea", "gogs"]:
         return gitea.Gitea(cfg)
-    if provider == 'gitee':
+    if provider == "gitee":
         return gitee.Gitee(cfg)
     if provider == "gf":
         return gongfeng.GF(cfg)
 
-    raise ValueError(f'Invalid provider: {provider}')
+    raise ValueError(f"Invalid provider: {provider}")
 
 
 def main():
-    precheck()
-
     args = parse_args()
     cfg = load_config(args.cfg_file)
+
+    precheck()
 
     migrate = cfg.get("migrate", None)
     if not migrate:
@@ -71,9 +71,6 @@ def main():
     migrate_to_git = git_factory(migrate_to_cfg)
 
     all_repos = migrate_from_git.list_repos()
-    for i, repo in enumerate(all_repos):
-        print(f'{str(i)}. {repo["name"]}')
-
     repos = []
     migrate_repos = migrate.get("repos", [])
     if len(migrate_repos) == 0:
@@ -85,11 +82,11 @@ def main():
                     repos.append(repo)
     for repo in repos:
         try:
-            repo_dir = migrate_from_git.clone_repo(repo['name'])
+            repo_dir = migrate_from_git.clone_repo(repo["name"])
             if repo_dir:
                 has_create = migrate_to_git.create_repo(**repo)
                 if has_create:
-                    migrate_to_git.push_repo(repo['name'], repo_dir)
+                    migrate_to_git.push_repo(repo["name"], repo_dir)
         except Exception as e:
             raise RuntimeError(e)
 
