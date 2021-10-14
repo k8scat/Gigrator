@@ -1,6 +1,9 @@
 # Gigrator
 
-Git 代码仓批量迁移工具，支持 GitHub、码云（Gitee）、GitLab、Gitea、Coding、Gogs、腾讯工蜂。
+> Gigrator == Gi~~t~~ + ~~mi~~grate
+
+Gigrator 是一个 Git 代码仓批量迁移工具，支持众多流行的代码托管平台，包括 GitHub、码云（Gitee）、GitLab、Gitea、Coding、Gogs、腾讯工蜂，
+同时可以基于本项目进行拓展其他代码托管平台。
 
 如果你在国外 GitHub 上托管了数十上百个代码仓，
 现在想要快速地迁移到国内的码云（Gitee）或自建的 Git 代码托管平台（比如 GitLab、Gitea）上的话，
