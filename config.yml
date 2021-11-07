@@ -2,6 +2,7 @@ migrate:
   from: github
   to: gitee
   clone_dir: ""
+  # 默认迁移所有代码仓，可以设置 repos 迁移特定的代码仓
   # repos:
   #   - repo_a
   #   - repo_b

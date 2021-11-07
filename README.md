@@ -1,7 +1,5 @@
 # Gigrator
 
-> Gigrator == Gi~~t~~ + ~~mi~~grate
-
 Gigrator 是一个 Git 代码仓批量迁移工具，支持众多流行的代码托管平台，包括 GitHub、码云（Gitee）、GitLab、Gitea、Coding、Gogs、腾讯工蜂，
 同时可以基于本项目进行拓展其他代码托管平台。
 
@@ -45,18 +43,18 @@ cd gigrator
 make
 ```
 
-### 使用
+## 使用
 
-#### 环境要求
+### 环境要求
 
 - Git
 - Python3
 
-#### 配置文件
+### 配置文件
 
-配置文件参考 [config.yml](./config.yml)
+参考 [config.yml](./config.yml)
 
-#### 运行
+### 运行
 
 ```bash
 gigrator -c config.yml
