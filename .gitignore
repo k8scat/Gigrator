@@ -1,7 +1,7 @@
 .vscode
-*.json
-.repos
 .idea
 __pycache__
-ENV
-test.py
+.venv*
+build
+dist
+*.egg-info
