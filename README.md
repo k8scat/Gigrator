@@ -1,5 +1,7 @@
 # Gigrator
 
+## GitHub Action 来了: [action-mirror-git](https://github.com/k8scat/action-mirror-git) 镜像同步 Git 仓库
+
 [![](https://img.shields.io/badge/GitHub-success)](https://github.com/k8scat/gigrator)
 [![](https://img.shields.io/badge/Gitee-red)](https://gitee.com/k8scat/gigrator)
 
