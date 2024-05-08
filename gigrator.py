@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-@author: hsowan <hsowan.me@gmail.com>
+@author: K8sCat <k8scat@gmail.com>
 @date: 2020/2/10
-
 """
 import json
 import logging

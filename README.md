@@ -5,11 +5,11 @@
 [![](https://img.shields.io/badge/GitHub-success)](https://github.com/k8scat/gigrator)
 [![](https://img.shields.io/badge/Gitee-red)](https://gitee.com/k8scat/gigrator)
 
-Git 代码仓批量迁移
+Gigrator 是一个 Git 代码仓批量迁移工具，支持多种 Git 平台，包括 Gitee、GitLab、GitHub、Gitea、Coding、Gogs 和腾讯工蜂，同时支持自行扩展更多 Git 平台。
 
 ![gigrator.png](images/gigrator.png)
 
-## Start
+## 快速开始
 
 ```shell script
 git clone https://github.com/k8scat/gigrator.git
@@ -21,19 +21,7 @@ pip3 install -r requirements.txt
 python3 gigrator.py
 ```
 
-## Develop
-
-```python
-# Base class
-class Git:
-    pass
-
-# Other GitServer class should inherit Git
-class OtherGit(Git):
-    pass
-```
-
-## Support
+## 支持平台
 
 * [x] [Gitee](https://gitee.com/)
 * [x] [GitLab](https://gitlab.com/)
@@ -52,74 +40,23 @@ Note:
 * 只能迁移指定用户下的仓库, 即 `{username}/{repo_name}`, 不包括参与的或者组织的仓库
 * 迁移包括commits、branches和tags, 不包括issues、pr和wiki
 
-## Environment
+## 环境
 
 * Git
 * Python
 
 开发环境: `git version 2.20.1 (Apple Git-117)` + `Python 3.7.2`
 
-## Dependencies
+## 开发手册
 
-* [Requests](https://2.python-requests.org/en/master/)
+[开发手册](./dev.md)
 
-## References
+## 开源协议
 
-### GitLab
+[MIT](./LICENSE)
 
-* [GitLab API Docs](https://docs.gitlab.com/ee/api/)
-* [GitLab Create Repo](https://docs.gitlab.com/ee/api/projects.html#create-project)
-* [Project visibility level](https://docs.gitlab.com/ee/api/projects.html#project-visibility-level)
+## 交流群
 
-## [GitLab GraphQL API](https://docs.gitlab.com/ee/api/graphql/)
+<img src="./images/weixin.png" alt="交流群" width="300" height="auto">
 
-Can not create a project!
-
-It will co-exist with the current v4 REST API. If we have a v5 API, this should be a compatibility layer on top of GraphQL.
-
-* [Introduction to GraphQL](https://developer.github.com/v4/guides/intro-to-graphql/)
-* [GraphQL API Resources](https://docs.gitlab.com/ee/api/graphql/reference/index.html)
-
-### [GitHub REST API v3](https://developer.github.com/v3/)
-
-* [GitHub Create Repo](https://developer.github.com/v3/repos/#create)
-* [GitHub Personal Access Token](https://github.com/settings/tokens)
-
-## [GitHub GraphQL API v4](https://developer.github.com/v4/)
-
-* [GraphQL resource limitations](https://developer.github.com/v4/guides/resource-limitations/)
-* [Forming Calls with GraphQL](https://developer.github.com/v4/guides/forming-calls/)
-
-
-### Gitee
-
-* [Gitee OpenAPI](https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepoStargazers?ex=no)
-* [Gitee Personal Access Token](https://gitee.com/profile/personal_access_tokens)
-
-### Gitea
-
-* [Gitea API](https://gitea.com/api/v1/swagger)
-* [Get a repo](https://gitea.com/api/v1/swagger#/repository/repoGet)
-* [Create a repo](https://gitea.com/api/v1/swagger#/repository/createCurrentUserRepo)
-* [List the repos that the authenticated user owns or has access to](https://gitea.com/api/v1/swagger#/user/userCurrentListRepos)
-
-### Gogs
-
-* [gogs/docs-api](https://github.com/gogs/docs-api)
-* [Demo site](https://try.gogs.io/)
-
-### Coding
-
-* [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
-
-### GF (腾讯工蜂)
-
-* [Open API](https://code.tencent.com/help/api/prepare)
-
-### GraphQL Client
-
-* [sgqlc](https://github.com/profusion/sgqlc)
-
-## License
-
-[MIT](https://github.com/k8scat/gigrator/blob/master/LICENSE)
+> 二维码失效可添加微信 「kennn007」，请备注「Gigrator」。
