@@ -54,9 +54,3 @@ Note:
 ## 开源协议
 
 [MIT](./LICENSE)
-
-## 交流群
-
-<img src="./images/weixin.png" alt="交流群" width="300" height="auto">
-
-> 二维码失效可添加微信 「kennn007」，请备注「Gigrator」。
