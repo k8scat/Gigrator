@@ -1,47 +1,74 @@
-# 开发文档
+# 开发手册
 
-## GitLab
+## 新增其他Git平台
 
-- [GitLab API Docs](https://docs.gitlab.com/ee/api/)
-- [GitLab Create Repo](https://docs.gitlab.com/ee/api/projects.html#create-project)
-- [Project visibility level](https://docs.gitlab.com/ee/api/projects.html#project-visibility-level)
-- [GitLab GraphQL API](https://docs.gitlab.com/ee/api/graphql/)
-- [Introduction to GraphQL](https://developer.github.com/v4/guides/intro-to-graphql/)
-- [GraphQL API Resources](https://docs.gitlab.com/ee/api/graphql/reference/index.html)
+```python
+# Base class
+class Git:
+    pass
 
-## [GitHub REST API v3](https://developer.github.com/v3/)
+# Other GitServer class should inherit Git
+class OtherGit(Git):
+    pass
+```
 
-- [GitHub Create Repo](https://developer.github.com/v3/repos/#create)
-- [GitHub Personal Access Token](https://github.com/settings/tokens)
-- [GitHub GraphQL API v4](https://developer.github.com/v4/)
-- [GraphQL resource limitations](https://developer.github.com/v4/guides/resource-limitations/)
-- [Forming Calls with GraphQL](https://developer.github.com/v4/guides/forming-calls/)
+## Dependencies
 
-## Gitee
+* [Requests](https://2.python-requests.org/en/master/)
 
-- [Gitee OpenAPI](https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepoStargazers?ex=no)
-- [Gitee Personal Access Token](https://gitee.com/profile/personal_access_tokens)
+## References
 
-## Gitea
+### GitLab
 
-- [Gitea API](https://gitea.com/api/v1/swagger)
-- [Get a repo](https://gitea.com/api/v1/swagger#/repository/repoGet)
-- [Create a repo](https://gitea.com/api/v1/swagger#/repository/createCurrentUserRepo)
-- [List the repos that the authenticated user owns or has access to](https://gitea.com/api/v1/swagger#/user/userCurrentListRepos)
+* [GitLab API Docs](https://docs.gitlab.com/ee/api/)
+* [GitLab Create Repo](https://docs.gitlab.com/ee/api/projects.html#create-project)
+* [Project visibility level](https://docs.gitlab.com/ee/api/projects.html#project-visibility-level)
 
-## Gogs
+## [GitLab GraphQL API](https://docs.gitlab.com/ee/api/graphql/)
 
-- [gogs/docs-api](https://github.com/gogs/docs-api)
-- [Demo site](https://try.gogs.io/)
+Can not create a project!
 
-## Coding
+It will co-exist with the current v4 REST API. If we have a v5 API, this should be a compatibility layer on top of GraphQL.
 
-- [Open API](https://help.coding.net/openapi)
+* [Introduction to GraphQL](https://developer.github.com/v4/guides/intro-to-graphql/)
+* [GraphQL API Resources](https://docs.gitlab.com/ee/api/graphql/reference/index.html)
 
-## GF (腾讯工蜂)
+### [GitHub REST API v3](https://developer.github.com/v3/)
 
-- [Open API](https://code.tencent.com/help/api/prepare)
+* [GitHub Create Repo](https://developer.github.com/v3/repos/#create)
+* [GitHub Personal Access Token](https://github.com/settings/tokens)
 
-## GraphQL Client
+## [GitHub GraphQL API v4](https://developer.github.com/v4/)
 
-- [sgqlc](https://github.com/profusion/sgqlc)
+* [GraphQL resource limitations](https://developer.github.com/v4/guides/resource-limitations/)
+* [Forming Calls with GraphQL](https://developer.github.com/v4/guides/forming-calls/)
+
+
+### Gitee
+
+* [Gitee OpenAPI](https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepoStargazers?ex=no)
+* [Gitee Personal Access Token](https://gitee.com/profile/personal_access_tokens)
+
+### Gitea
+
+* [Gitea API](https://gitea.com/api/v1/swagger)
+* [Get a repo](https://gitea.com/api/v1/swagger#/repository/repoGet)
+* [Create a repo](https://gitea.com/api/v1/swagger#/repository/createCurrentUserRepo)
+* [List the repos that the authenticated user owns or has access to](https://gitea.com/api/v1/swagger#/user/userCurrentListRepos)
+
+### Gogs
+
+* [gogs/docs-api](https://github.com/gogs/docs-api)
+* [Demo site](https://try.gogs.io/)
+
+### Coding
+
+* [Open API](https://open.coding.net/open-api/?_ga=2.122224323.99121124.1563808661-1235584671.1544277191)
+
+### GF (腾讯工蜂)
+
+* [Open API](https://code.tencent.com/help/api/prepare)
+
+### GraphQL Client
+
+* [sgqlc](https://github.com/profusion/sgqlc)
