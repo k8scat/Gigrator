@@ -38,6 +38,9 @@ class Github(Git):
                 return data["data"]["repository"].get("id", None) is not None
             except KeyError:
                 return False
+            except Exception as e:
+                print(data)
+                raise RuntimeError(e)
 
     def create_repo(self, name: str, desc: str, is_private: bool) -> bool:
         if self.is_repo_existed(name):

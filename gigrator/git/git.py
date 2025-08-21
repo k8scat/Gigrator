@@ -4,6 +4,7 @@ link: https://github.com/k8scat/gigrator.git
 """
 import os
 import re
+import shutil
 import subprocess
 
 
@@ -68,8 +69,10 @@ class Git:
     def clone_repo(self, repo_name: str, repo_owner: str = "") -> str:
         if not repo_owner:
             repo_owner = self.username
+        
         repo_path = f"{repo_owner}/{repo_name}"
-        os.makedirs(os.path.join(self.clone_dir, repo_owner), exist_ok=True)
+        clone_dir = os.path.join(self.clone_dir, repo_owner)
+        os.makedirs(clone_dir, exist_ok=True)
 
         remote_addr = f"{self.ssh_prefix}:{repo_path}.git"
         if self.use_https:
@@ -78,14 +81,18 @@ class Git:
         clone_cmd = ["git", "clone", "--bare", remote_addr]
         print(clone_cmd)
         
-        cwd = f"{self.clone_dir}/{repo_owner}"
+        repo_dir = os.path.join(clone_dir, repo_name + ".git")
+        if os.path.exists(repo_dir):
+            shutil.rmtree(repo_dir)
+        
         ret = subprocess.run(args=clone_cmd,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              encoding="utf-8",
-                             cwd=cwd)
+                             cwd=clone_dir)
         if ret.returncode == 0:
-            return os.path.join(cwd, repo_name + ".git")
+            return repo_dir
+        
         print(ret.stderr, end='')
         return None
 
