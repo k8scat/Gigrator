@@ -29,11 +29,19 @@ def main():
     from_git, to_git, repos = prepare_migrate(cfg)
     for repo in repos:
         try:
-            repo_dir = from_git.clone_repo(repo["name"])
+            repo_dir = from_git.clone_repo(repo["name"], repo_owner=repo.get("owner", ""))
             if repo_dir:
-                has_create = to_git.create_repo(**repo)
+                has_create = to_git.create_repo(name=repo["name"], desc=repo.get("desc", ""), is_private=repo.get("is_private", True))
                 if has_create:
-                    to_git.push_repo(repo["name"], repo_dir)
+                    ok = to_git.push_repo(repo["name"], repo_dir)
+                    if ok:
+                        print(f"push {repo['name']} success")
+                    else:
+                        print(f"push {repo['name']} failed")
+                else:
+                    print(f"create {repo['name']} failed")
+            else:
+                print(f"clone {repo['name']} failed")
         except Exception as e:
             raise RuntimeError(e)
 

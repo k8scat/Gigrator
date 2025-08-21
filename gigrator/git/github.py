@@ -40,6 +40,9 @@ class Github(Git):
                 return False
 
     def create_repo(self, name: str, desc: str, is_private: bool) -> bool:
+        if self.is_repo_existed(name):
+            return True
+        
         mutation = """
         mutation ($name: String!, $desc: String!, $isPrivate: RepositoryVisibility!) {
           createRepository(input: {name: $name, description: $desc, visibility: $isPrivate}) {

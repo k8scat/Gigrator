@@ -22,6 +22,7 @@ github:
   https_prefix: https://github.com
   username: ""
   token: ""
+  use_https: true
 
 gitlab:
   provider": gitlab
@@ -38,6 +39,11 @@ coding:
   https_prefix: https://e.coding.net
   username: ""
   token: ""
+  org_name: ""
+  is_org: false
+  use_web_api: true
+  use_https: true
+  web_cookie: ""
 
 # 腾讯工蜂 https://code.tencent.com/
 gongfeng:

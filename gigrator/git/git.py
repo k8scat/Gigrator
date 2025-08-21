@@ -68,23 +68,28 @@ class Git:
     def clone_repo(self, repo_name: str, repo_owner: str = "") -> str:
         if not repo_owner:
             repo_owner = self.username
-        remote_addr = f"{self.ssh_prefix}:{repo_owner}/{repo_name}.git"
+        repo_path = f"{repo_owner}/{repo_name}"
+        os.makedirs(os.path.join(self.clone_dir, repo_owner), exist_ok=True)
 
+        remote_addr = f"{self.ssh_prefix}:{repo_path}.git"
         if self.use_https:
-            remote_addr = f"{self.https_prefix_auth}/{repo_owner}/{repo_name}.git"
+            remote_addr = f"{self.https_prefix_auth}/{repo_path}.git"
 
         clone_cmd = ["git", "clone", "--bare", remote_addr]
+        print(clone_cmd)
+        
+        cwd = f"{self.clone_dir}/{repo_owner}"
         ret = subprocess.run(args=clone_cmd,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              encoding="utf-8",
-                             cwd=self.clone_dir)
+                             cwd=cwd)
         if ret.returncode == 0:
-            return os.path.join(self.clone_dir, repo_name + ".git")
+            return os.path.join(cwd, repo_name + ".git")
         print(ret.stderr, end='')
         return None
 
-    def push_repo(self, repo_name: str, repo_dir: str, repo_owner: str) -> bool:
+    def push_repo(self, repo_name: str, repo_dir: str, repo_owner: str = "") -> bool:
         if not repo_owner:
             repo_owner = self.username
         remote_addr = f"{self.ssh_prefix}:{repo_owner}/{repo_name}.git"
@@ -97,11 +102,11 @@ class Git:
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              encoding="utf-8",
-                             cwd=self.clone_dir)
+                             cwd=repo_dir)
         if ret.returncode == 0:
-            return os.path.join(self.clone_dir, repo_name + ".git")
+            return True
         print(ret.stderr, end='')
-        return None
+        return False
 
     def list_repos(self) -> list:
         raise NotImplementedError
