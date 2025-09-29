@@ -7,3 +7,4 @@ dist
 *.egg-info
 
 config-*.yml
+.gigrator/
