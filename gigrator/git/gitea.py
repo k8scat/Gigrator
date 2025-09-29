@@ -11,7 +11,8 @@ class Gitea(Git):
         super().__init__(config)
         self.headers = {
             "Content-Type": "application/json",
-            "Authorization": f"token {self.token}"
+            "Authorization": f"token {self.token}",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
         }
 
     def is_repo_existed(self, repo_name: str) -> bool:

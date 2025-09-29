@@ -10,7 +10,10 @@ from gigrator.git.git import Git
 class Coding(Git):
     def __init__(self, config: dict):
         super().__init__(config)
-        self.headers = {"Authorization": f"token {self.token}"}
+        self.headers = {
+            "Authorization": f"token {self.token}",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+        }
         self.use_web_api = config.get("use_web_api", False)
         self.web_headers = {
             "accept": "application/json",

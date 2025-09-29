@@ -40,9 +40,13 @@ class Git:
         self.https_prefix = config.get("https_prefix", "")
         if self.https_prefix.endswith("/"):
             self.https_prefix = self.https_prefix.rstrip("/")
-        self.https_prefix_auth = self._https_prefix_auth()
+        self.https_prefix_auth = ""
+        if self.https_prefix:
+            self.https_prefix_auth = self._https_prefix_auth()
 
         self.use_https = config.get("use_https", False)
+        if self.use_https and not self.https_prefix:
+            raise ValueError("https_prefix is required when use_https is True")
 
         self.api = config.get("api", "")
         if self.api:
