@@ -1,0 +1,63 @@
+migrate:
+  from: github
+  to: gitee
+  clone_dir: ""
+  # 默认迁移所有代码仓，可以设置 repos 迁移特定的代码仓
+  # repos:
+  #   - repo_a
+  #   - repo_b
+
+gitee:
+  provider: gitee
+  api: https://gitee.com/api/v5
+  ssh_prefix: git@gitee.com
+  https_prefix: https://gitee.com
+  username: ""
+  token: ""
+
+github:
+  provider: github
+  api: https://api.github.com/graphql
+  ssh_prefix: git@github.com
+  https_prefix: https://github.com
+  username: ""
+  token: ""
+  use_https: true
+
+gitlab:
+  provider": gitlab
+  api: https://gitlab.com/api/v4
+  ssh_prefix: git@gitlab.com
+  https_prefix: https://gitlab.com
+  username: ""
+  token: ""
+
+coding:
+  provider: coding
+  api: https://{your-team}.coding.net
+  ssh_prefix: git@e.coding.net
+  https_prefix: https://e.coding.net
+  username: ""
+  token: ""
+  org_name: ""
+  is_org: false
+  use_web_api: true
+  use_https: true
+  web_cookie: ""
+
+# 腾讯工蜂 https://code.tencent.com/
+gongfeng:
+  provider: gongfeng
+  api: https://code.tencent.com/api/v3
+  ssh_prefix: git@git.code.tencent.com
+  https_prefix: https://git.code.tencent.com
+  username: ""
+  token: ""
+
+gitea:
+  provider: gitea
+  api: https://gitea.com/api/v1
+  ssh_prefix: git@gitea.com
+  https_prefix: https://gitea.com
+  username: ""
+  token: ""
