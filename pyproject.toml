@@ -1,7 +1,17 @@
 [project]
 name = "gigrator"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.1"
+description = "Gigrator 是一个 Git 代码仓批量迁移工具"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0.3",
+    "requests>=2.32.5",
+]
+
+[project.scripts]
+gigrator = "gigrator.gigrator:main"
+
+[[tool.uv.index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+default = true

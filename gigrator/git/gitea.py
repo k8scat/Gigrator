@@ -19,7 +19,7 @@ class Gitea(Git):
         # GET
         # ​/repos​/{owner}​/{repo}
         # Get a repository
-        url = f"{self.api}/repos/{self.username}/{repo_name}"
+        url = f"{self.base_api}/repos/{self.username}/{repo_name}"
         with requests.get(url, headers=self.headers) as r:
             return r.status_code == requests.codes.ok
 
@@ -30,7 +30,7 @@ class Gitea(Git):
             "name": name,
             "private": is_private
         }
-        url = f"{self.api}/user/repos"
+        url = f"{self.base_api}/user/repos"
         with requests.post(url, headers=self.headers, json=data) as r:
             return r.status_code == requests.codes.created
 
@@ -39,7 +39,7 @@ class Gitea(Git):
         # ​/user​/repos
         # List the repos that the authenticated user owns or has access to
         # 没有做分页: https://github.com/go-gitea/gitea/issues/7515
-        url = f"{self.api}/user/repos"
+        url = f"{self.base_api}/user/repos"
         all_repos = []
         with requests.get(url, headers=self.headers) as r:
             if r.status_code != requests.codes.ok:

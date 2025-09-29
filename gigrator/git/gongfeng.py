@@ -17,13 +17,13 @@ class GF(Git):
     def is_repo_existed(self, repo_name: str) -> bool:
         # repo_name如果包含命名空间需要URL编码
         repo_name_encoded = urlencode(repo_name)
-        url = f"{self.api}/projects/{repo_name_encoded}/repository/tree"
+        url = f"{self.base_api}/projects/{repo_name_encoded}/repository/tree"
         with requests.get(url, headers=self.headers) as r:
             return r.status_code == requests.codes.ok
 
     # repo_name = name_with_namespace
     def create_repo(self, repo_name: str, desc: str, is_private: bool) -> bool:
-        url = f"{self.api}/projects"
+        url = f"{self.base_api}/projects"
         repo_full_name_list = repo_name.split("/")
         if len(repo_full_name_list) == 1:
             repo_name_namespace = ""
@@ -42,7 +42,7 @@ class GF(Git):
             return r.status_code == requests.codes.ok or r.status_code == requests.codes.created
 
     def list_repos(self) -> list:
-        list_groups_url = f"{self.api}/groups"
+        list_groups_url = f"{self.base_api}/groups"
         all_repos = []
         with requests.get(list_groups_url, headers=self.headers) as r:
             if r.status_code != requests.codes.ok:

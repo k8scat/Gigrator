@@ -4,7 +4,7 @@ link: https://github.com/k8scat/gigrator.git
 """
 import yaml
 from gigrator.git.git import Git
-from gigrator.git import gitlab, github, gitee, gitea, coding, gongfeng
+from gigrator.git import gitlab, github, gitee, gitea, coding, gongfeng, e_gitee_v8
 
 # https://pyyaml.org/wiki/PyYAMLDocumentation
 try:
@@ -37,6 +37,8 @@ def git_factory(cfg: dict) -> Git:
         return gitee.Gitee(cfg)
     if provider == "gf":
         return gongfeng.GF(cfg)
+    if provider == "e_gitee_v8":
+        return e_gitee_v8.Gitee(cfg)
 
     raise ValueError(f"Invalid provider: {provider}")
 
@@ -65,6 +67,7 @@ def prepare_migrate(cfg: dict):
     to_git = git_factory(migrate_to_cfg)
 
     all_repos = from_git.list_repos()
+    print(f"Found {len(all_repos)} repos in {migrate_from_cfg.get('provider', '')}")
     repos = []
     cfg_repos = migrate_cfg.get("repos", [])
     if len(cfg_repos) == 0:

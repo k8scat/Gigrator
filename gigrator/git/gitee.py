@@ -18,7 +18,7 @@ class Gitee(Git):
         获取用户的某个仓库: GET /repos/{owner}/{repo}
         https://gitee.com/api/v5/swagger#/getV5ReposOwnerRepo
         """
-        url = f"{self.api}/repos/{self.username}/{repo_name}"
+        url = f"{self.base_api}/repos/{self.username}/{repo_name}"
         params = {
             "access_token": self.token
         }
@@ -32,7 +32,7 @@ class Gitee(Git):
             "description": desc,
             "private": is_private
         }
-        url = f"{self.api}/user/repos"
+        url = f"{self.base_api}/user/repos"
         with requests.post(url, json=data, headers=self.headers) as r:
             return r.status_code == requests.codes.created
 
@@ -41,7 +41,7 @@ class Gitee(Git):
         列出授权用户的所有仓库: GET /user/repos
         https://gitee.com/api/v5/swagger#/getV5UserRepos
         """
-        url = f"{self.api}/user/repos"
+        url = f"{self.base_api}/user/repos"
         params = {
             "access_token": self.token,
             "type": "personal",

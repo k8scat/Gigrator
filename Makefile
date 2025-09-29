@@ -1,23 +1,15 @@
-version = 1.0.2
+version =
 
 install:
-	python setup.py install
+	pip install -e .
 
-.PHONY: install-requirements
-install-requirements:
-	pip install -r requirements.txt
+publish:
+	@if [ -z "$(version)" ]; then \
+		echo "Please set version, e.g., make publish version=0.1.0"; \
+		exit 1; \
+	fi
 
-build-wheel: clean
-	sed -i 's/{version}/$(version)/g' setup.py
-	python setup.py sdist bdist_wheel
-
-username = __token__
-password =
-release-pypi: install-requirements clean build-wheel
-	python -m twine upload -u $(username) -p $(password) dist/*
-
-clean:
-	rm -rf build dist gigrator.egg-info
-
-install-wheel:
-	pip install --force-reinstall dist/gigrator-$(version)-py3-none-any.whl
+	rm -rf dist
+	uv version $(version)
+	uv build
+	uv publish

@@ -41,7 +41,7 @@ class Coding(Git):
         """
         GET /api/user/{username}/project/{project_name}
         """
-        url = f"{self.api}/api/user/{self.username}/project/{repo_name}"
+        url = f"{self.base_api}/api/user/{self.username}/project/{repo_name}"
         with requests.get(url, headers=self.headers) as r:
             if r.status_code == requests.codes.ok:
                 data = r.json()
@@ -53,7 +53,7 @@ class Coding(Git):
 
     def get_group_id_all(self) -> int:
         """获取 ”全部项目“ 的分组"""
-        url = f"{self.api}/api/platform/project/groups/group?needProjectNum=true"
+        url = f"{self.base_api}/api/platform/project/groups/group?needProjectNum=true"
         with requests.get(url, headers=self.web_headers) as r:
             if r.status_code != requests.codes.ok:
                 raise RuntimeError(r.content.decode("utf-8"))
@@ -73,7 +73,7 @@ class Coding(Git):
         if group_id == 0:
             raise RuntimeError("获取 ”全部项目“ 的分组失败")
 
-        url = f"{self.api}/api/platform/project/projects/search?page=1&pageSize=100&groupId={group_id}&type=JOINED&archived=false&sort=VISIT&order=DESC"
+        url = f"{self.base_api}/api/platform/project/projects/search?page=1&pageSize=100&groupId={group_id}&type=JOINED&archived=false&sort=VISIT&order=DESC"
 
         with requests.get(url, headers=self.web_headers) as r:
             if r.status_code != requests.codes.ok:
@@ -90,7 +90,7 @@ class Coding(Git):
         return result
 
     def list_web_repos(self, project_name: str) -> list:
-        url = f"{self.api}/api/user/{self.username}/project/{project_name}/depot-group/depots?type=ALL&sort=DEFAULT&sortDirection=DESC"
+        url = f"{self.base_api}/api/user/{self.username}/project/{project_name}/depot-group/depots?type=ALL&sort=DEFAULT&sortDirection=DESC"
 
         with requests.get(url, headers=self.web_headers) as r:
             if r.status_code != requests.codes.ok:
@@ -131,7 +131,7 @@ class Coding(Git):
                     all_repos.append(repo)
             return all_repos
         
-        url = f"{self.api}/api/user/projects"
+        url = f"{self.base_api}/api/user/projects"
         params = {"type": "all", "pageSize": 10, "page": 1}
         total_page = 1
         

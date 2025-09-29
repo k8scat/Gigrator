@@ -20,7 +20,7 @@ class Gitlab(Git):
         GET /projects/:id
         """
         path = quote(f"{self.username}/{repo_name}", safe="")
-        url = f"{self.api}/projects/{path}"
+        url = f"{self.base_api}/projects/{path}"
         with requests.get(url, headers=self.headers) as r:
             return r.status_code == requests.codes.ok
 
@@ -30,7 +30,7 @@ class Gitlab(Git):
             "description": desc,
             "visibility": "private" if is_private else "public"
         }
-        url = f"{self.api}/projects"
+        url = f"{self.base_api}/projects"
         with requests.post(url, json=data, headers=self.headers) as r:
             return r.status_code == requests.codes.created
 
@@ -39,7 +39,7 @@ class Gitlab(Git):
         List user projects: GET /users/:user_id/projects (需要分页: ?page=1)
         不存在401的问题: 会返回公开的仓库
         """
-        url = f"{self.api}/users/{self.username}/projects"
+        url = f"{self.base_api}/users/{self.username}/projects"
         params = {
             "page": 1
         }

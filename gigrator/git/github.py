@@ -25,7 +25,7 @@ class Github(Git):
         """
         variables = {"repo_owner": self.username, "repo_name": repo_name}
         payload = {"query": query, "variables": variables}
-        with requests.post(self.api, json=payload, headers=self.headers) as r:
+        with requests.post(self.base_api, json=payload, headers=self.headers) as r:
             if r.status_code != requests.codes.ok:
                 raise RuntimeError(r.content.decode("utf-8"))
 
@@ -61,7 +61,7 @@ class Github(Git):
             "isPrivate": "PRIVATE" if is_private else "PUBLIC",
         }
         payload = {"query": mutation, "variables": variables}
-        with requests.post(self.api, json=payload, headers=self.headers) as r:
+        with requests.post(self.base_api, json=payload, headers=self.headers) as r:
             if r.status_code != requests.codes.ok:
                 raise RuntimeError(r.content.decode("utf-8"))
 
@@ -106,7 +106,7 @@ class Github(Git):
                 )
 
         while True:
-            with requests.post(self.api, json=payload, headers=self.headers) as r:
+            with requests.post(self.base_api, json=payload, headers=self.headers) as r:
                 if r.status_code != requests.codes.ok:
                     raise RuntimeError(r.content.decode("utf-8"))
 

@@ -12,7 +12,8 @@ class Git:
     provider = ""
     username = ""
     token = ""
-    api = ""
+    token_user = ""
+    base_api = ""
     ssh_prefix = ""
     https_prefix = ""
     use_https = False
@@ -26,12 +27,13 @@ class Git:
             raise ValueError("Invalid provider")
 
         self.username = config.get("username", "")
-        if not self.username:
-            raise ValueError("Invalid username")
+        # if not self.username:
+        #     raise ValueError("Invalid username")
 
         self.token = config.get("token", "")
         if not self.token:
             raise ValueError("Invalid token")
+        self.token_user = config.get("token_user", self.username)
 
         self.ssh_prefix = config.get("ssh_prefix", "")
         if self.ssh_prefix.endswith(":"):
@@ -48,11 +50,11 @@ class Git:
         if self.use_https and not self.https_prefix:
             raise ValueError("https_prefix is required when use_https is True")
 
-        self.api = config.get("api", "")
-        if self.api:
-            if not re.match(r"^http(s)?://.+$", self.api):
-                raise ValueError("Invalid api")
-            self.api = self.api.rstrip("/")
+        self.base_api = config.get("base_api", "")
+        if self.base_api:
+            if not re.match(r"^http(s)?://.+$", self.base_api):
+                raise ValueError("Invalid base_api")
+            self.base_api = self.base_api.rstrip("/")
 
         self.clone_dir = config.get("clone_dir", "")
         if not self.clone_dir:
@@ -68,7 +70,7 @@ class Git:
         parts = self.https_prefix.split("://")
         schema = parts[0]
         domain = parts[1]
-        return f"{schema}://{self.username}:{self.token}@{domain}"
+        return f"{schema}://{self.token_user}:{self.token}@{domain}"
 
     def clone_repo(self, repo_name: str, repo_owner: str = "") -> str:
         if not repo_owner:
